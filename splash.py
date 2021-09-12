@@ -1,7 +1,11 @@
 import pygame
 import os
 
-WIDTH, HEIGHT = 900, 500
+WIDTH, HEIGHT = 900, 500 # I can't figure out how to publish to GitHub through Atom, but I can edit the code and add
+                         # to the repository directly by going to github.com
+                         #deletethiscommentwhenyoureadit
+                         #percentsignsmakebettercomments
+                         #donemessingwithyourcodenow
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("First Game")
 WHITE = (255,255,255)
