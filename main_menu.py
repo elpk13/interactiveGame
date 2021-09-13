@@ -55,10 +55,17 @@ while runningmenu:
             elif event.key == pygame.K_DOWN and position < 2:
                 position += 1
                 drawscreen()
-#            if event.key == pygame.K_SPACE:
-#                if position == 0:
+            if event.key == pygame.K_SPACE:
+                if position == 0:
+                  pass
                     # Launch game!
-#                elif position == 1:
+                elif position == 1:
+                  pass
                     # Open settings
-#                else:
+                else:
                     # Open about
+                    import about # Reads the file
+                    from about import displaygameinfo
+                    displaygameinfo(screen) # Displays text to our surface,
+                                            # runs loop for about screen.
+                    drawscreen() # Return screen to main menu when done.
