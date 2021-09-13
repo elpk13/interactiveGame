@@ -55,7 +55,7 @@ while runningmenu:
             elif event.key == pygame.K_DOWN and position < 2:
                 position += 1
                 drawscreen()
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                 if position == 0:
                   pass
                     # Launch game!
