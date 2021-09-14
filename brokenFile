@@ -2,19 +2,16 @@ import pygame
 import os
 #import sys
 
-
 pygame.init()
-pygame.font.init()
+#pygame.font.init()
 
 #draw the window used for the game
 WIDTH = 900
 HEIGHT = 500
-
-WIDTH, HEIGHT = 900, 500 
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("First Game")
-QUARTWID = WIDTH / 4
-HALFHEIGH = HEIGHT / 2
+#QUARTWID = WIDTH / 4
+#HALFHEIGH = HEIGHT / 2
 
 
 #set the colors used throughout the window
@@ -24,10 +21,10 @@ WHITE = (255, 255, 255)
 
 
 #fonts
-TESTFONT = pygame.font.SysFont('Corbel', 35)
-CHSTEXT = TESTFONT.render('Choose Game', True, SKYBLUE)
-SETTEXT = TESTFONT.render('Settings', True, SKYBLUE)
-ABTTEXT = TESTFONT.render('About', True, SKYBLUE)
+#TESTFONT = pygame.font.SysFont('Corbel', 35)
+#CHSTEXT = TESTFONT.render('Choose Game', True, SKYBLUE)
+#SETTEXT = TESTFONT.render('Settings', True, SKYBLUE)
+#ABTTEXT = TESTFONT.render('About', True, SKYBLUE)
 
 
 #update rate of the window
@@ -37,17 +34,17 @@ WOLF_GREY_IMAGE = pygame.image.load(os.path.join('Assets', "greyWolf.png"))
 
 #this is where we will scale the image (i scaled this test image manually, so the line is commented out)
 #SCALE
-#comment this tsetsetset
+
 #draw the buttons
 
 #draw the window and update it to display the change in color 
 def draw_window():
     WIN.fill(WHITE)
-#    WIN.blit(WOLF_GREY_IMAGE, (450,250))
-    pygame.draw.rect(WIN,FORESTGN,[QUARTWID-50,HALFHEIGH,100,50])
-    pygame.draw.rect(WIN,FORESTGN,[QUARTWID*2-50,HALFHEIGH,100,50])
-    pygame.draw.rect(WIN,FORESTGN,[QUARTWID*3-50,HALFHEIGH,100,50])
-    pygame.display.update()
+    WIN.blit(WOLF_GREY_IMAGE, (450,250))
+#    pygame.draw.rect(WIN,FORESTGN,[QUARTWID,HALFHEIGH,100,50])
+#    pygame.draw.rect(WIN,FORESTGN,[QUARTWID*2,HALFHEIGH,100,50])
+#    pygame.draw.rect(WIN,FORESTGN,[QUARTWID*3,HALFHEIGH,100,50])
+#    pygame.display.update()
 
 
 def main():
@@ -58,15 +55,15 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-            if event.type == pygame.KEYDOWN:
+#            if event.type == pygame.KEYDOWN:
                 #do this only when the appropriate key is clicked - sort keys
 #                if event.key == pygame.K_LEFT:
                     #move left
 #                if event.key == pygame.K_RIGHT:
                     #move right
-                if event.key == pygame.K_RETURN:
+#                if event.key == pygame.K_RETURN:
                     #click
-                    pygame.draw.rect(WIN,SKYBLUE,[QUARTWID*3,HALFHEIGH,100,50])
+#                    pygame.draw.rect(WIN,SKYBLUE,[QUARTWID*3,HALFHEIGH,100,50])
                 #now need to show buttons 
                 
         draw_window()
