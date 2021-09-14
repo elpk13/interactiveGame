@@ -1,0 +1,12 @@
+
+   About this game:
+
+   Wolf Adventure was made in 2021.
+
+   If you can read this, then the About page is working.
+   This text can be updated (to include a complete list of
+   image credits, etc.) by editing the text file "about.txt".
+
+   The properties of this text can be edited in "about.py".
+
+   Press spacebar to exit.
