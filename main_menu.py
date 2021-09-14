@@ -5,6 +5,9 @@
 # Currently, those screens are commented out as they are not yet coded.
 
 import pygame
+#need the folowing line because we've stored the pictures in a folder and python can't access it without the os.path.join line!
+import os
+
 pygame.init()
 
 height = 900 # Set the dimensions of the screen, by which
@@ -12,19 +15,19 @@ width = 1200  # everything will be scaled later.
 screen = pygame.display.set_mode((width,height))
 
 # Select and size background image
-background = pygame.image.load("winter_forest_background.jpg") # Image credit:
+background = pygame.image.load(os.path.join('Assets',"winter_forest_background.jpg")) # Image credit:
 background = pygame.transform.scale(background,(width,height)) # Linnaea Mallette,
                                                                # publicdomainpictures.net
 # Select and scale three buttons
-playbutton = pygame.image.load("play_button.jpg")
+playbutton = pygame.image.load(os.path.join('Assets',"play_button.jpg"))
 playbutton = pygame.transform.scale(playbutton,(int(width/2),int(height/4)))
-settingsbutton = pygame.image.load("settings_button.jpg")
+settingsbutton = pygame.image.load(os.path.join('Assets',"settings_button.jpg"))
 settingsbutton = pygame.transform.scale(settingsbutton,(int(width/6),int(height/12)))
-aboutbutton = pygame.image.load("about_button.jpg")
+aboutbutton = pygame.image.load(os.path.join('Assets',"about_button.jpg"))
 aboutbutton = pygame.transform.scale(aboutbutton,(int(width/6),int(height/12)))
 
 # Select and scale an indicator to show what is selected
-indicator = pygame.image.load("indicator_paw.png")
+indicator = pygame.image.load(os.path.join('Assets',"indicator_paw.png"))
 indicator = pygame.transform.scale(indicator,(int(height/12),int(height/12)))
 # Positions for indicator:  to the right of any of the three buttons
 positionslist = [(int(3*width/4),int(height/3)),(int(7*width/12),int(7*height/12)),
