@@ -63,12 +63,13 @@ while runningmenu:
                   pass
                     # Launch game!
                 elif position == 1:
-                  pass
                     # Open settings
+                    import settings
+                    drawscreen()
                 else:
                     # Open about
                     import about # Reads the file
                     from about import displaygameinfo
                     displaygameinfo(screen) # Displays text to our surface,
                                             # runs loop for about screen.
-                    drawscreen() # Return screen to main menu when done.
+                    drawscreen() # Return screen to main menu when done
