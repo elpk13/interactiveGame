@@ -61,7 +61,8 @@ while runningmenu:
                 drawscreen()
             if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                 if position == 0:
-                  pass
+                  import cyc
+                  drawscreen()
                     # Launch game!
                 elif position == 1:
                     # Open settings
