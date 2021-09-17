@@ -1,4 +1,4 @@
-#The purpose of this file is to host the choose your character screen that follows the main menu
+#The purpose of this file is to host the choose your chapter screen that follows the choose your 
 #eventually a difficulty setting will be integrated here or on the settings page. 
 
 #import necessary systems
@@ -24,33 +24,39 @@ background = pygame.transform.scale(background,(width,height)) # Linnaea Mallett
 
 #Set up the indicators used to make choices - will use a three indicator style like settings menu 
 # - but temporarily only need one indicator because starting with two wolves
-indicator1 = pygame.image.load(os.path.join('Assets',"indicator_paw.png"))
-indicator1 = pygame.transform.scale(indicator1,(int(height/12),int(height/12)))
-positions1list = [(int(width/3 - 50),int(height/2)),(int(2*width/3 - 50),int(height/2))]
-position1 = 0
+indicator = pygame.image.load(os.path.join('Assets',"indicator_paw.png"))
+indicator = pygame.transform.scale(indicator,(int(height/12),int(height/12)))
+positionslist = [(int(width/4 - 50),int(height/2 + 100)),(int(2*width/4 - 50),int(height/2 + 100)), 
+    (int(3*width/4 - 50),int(height/2 + 100))]
+position = 0
 
 # Blit background, then buttons, then indicator, and update screen.
 def drawscreen():
     screen.blit(background, (0,0))
-    screen.blit(indicator1,positions1list[position1])
+    screen.blit(indicator,positionslist[position])
     pygame.display.update()
 
 drawscreen()
 
-runningcyc = True
-
-while runningcyc:
+runningcychap = True
+while runningcychap:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:  # If 'x' button selected, end
-            runningcyc = False
-        elif event.type == pygame.KEYDOWN: 
-            if event.key == pygame.K_RIGHT and position1 == 0:
-                position1 = 1
-            elif event.key == pygame.K_LEFT and position1 == 1:
-                position1 = 0
+            runningcychap = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT and position < 2:
+                position += 1
+            elif event.key == pygame.K_LEFT and position > 0:
+                position -= 1
             drawscreen()
             if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
-                import cychap
-                drawscreen()
-                #move on to the next screen -> chapter selection
-            
+                if position == 0:
+                    #chapter1
+                    pass
+                elif position == 1:
+                    #chapter2
+                    pass
+                elif position == 2:
+                    #chapter3
+                    pass
+
