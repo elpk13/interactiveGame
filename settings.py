@@ -37,17 +37,14 @@ indicator3 = pygame.transform.scale(indicator3,(int(height/14),int(height/14)))
 # height will be at 1/3 and 2/3 (first and second slider)
 positionslist1 = [(int(width/3-25),int(height/3)),(int(4*width/9),int(height/3)),
     (int(5*width/9),int(height/3)),(int(2*width/3 + 25),int(height/3))]
-position1 = 0 # Current position, indicated by place in positionslist
-
 positionslist2 = [(int(width/3 - 25),int(2*height/3)),(int(4*width/9),int(2*height/3)),
     (int(5*width/9),int(2*height/3)),(int(2*width/3 + 25),int(2*height/3))]
-position2 = 0 
-
 positionslist3 = [(int(7*width/9),int(height/3)),(int(7*width/9),int(2*height/3))]
-position3 = 0 
 
-backsound = 3
-narration = 3
+position1 = 0 # Current position, indicated by place in positionslist
+position2 = 0
+position3 = 0
+
 
 
 
@@ -69,6 +66,7 @@ def drawscreen():
     screen.blit(indicator1,positionslist1[position1])
     screen.blit(indicator2,positionslist2[position2])
     pygame.display.update()
+
 
 drawscreen()
 
@@ -103,4 +101,5 @@ while runsettings:
                 drawscreen()
             if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                 runsettings = False
+
 
