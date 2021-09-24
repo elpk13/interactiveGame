@@ -26,12 +26,12 @@ basleft = pygame.image.load(os.path.join('Assets',"Nico_Headshot.png"))
 bascent = pygame.image.load(os.path.join('Assets',"Sparrow_Headshot.png"))
 basrite = pygame.image.load(os.path.join('Assets',"Timber_Headshot.png"))
 # Scale to uniform height without distorting.
-topleft = pygame.transform.scale(topleft,(int(height/3),int(height*topleft.get_height()/(3*topleft.get_width()))))
-topcent = pygame.transform.scale(topcent,(int(height/3),int(height*topcent.get_height()/(3*topcent.get_width()))))
-toprite = pygame.transform.scale(toprite,(int(height/3),int(height*toprite.get_height()/(3*toprite.get_width()))))
-basleft = pygame.transform.scale(basleft,(int(height/3),int(height*basleft.get_height()/(3*basleft.get_width()))))
-bascent = pygame.transform.scale(bascent,(int(height/3),int(height*bascent.get_height()/(3*bascent.get_width()))))
-basrite = pygame.transform.scale(basrite,(int(height/3),int(height*basrite.get_height()/(3*basrite.get_width()))))
+topleft = pygame.transform.scale(topleft,(int(height*topleft.get_width()/(3*topleft.get_height())),int(height/3)))
+topcent = pygame.transform.scale(topcent,(int(height*topcent.get_width()/(3*topcent.get_height())),int(height/3)))
+toprite = pygame.transform.scale(toprite,(int(height*toprite.get_width()/(3*toprite.get_height())),int(height/3)))
+basleft = pygame.transform.scale(basleft,(int(height*basleft.get_width()/(3*basleft.get_height())),int(height/3)))
+bascent = pygame.transform.scale(bascent,(int(height*bascent.get_width()/(3*bascent.get_height())),int(height/3)))
+basrite = pygame.transform.scale(basrite,(int(height*basrite.get_width()/(3*basrite.get_height())),int(height/3)))
 
 #Set up the indicators used to make choices - will use a three indicator style like settings menu
 # - but temporarily only need one indicator because starting with two wolves
