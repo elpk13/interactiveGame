@@ -20,17 +20,17 @@ background = pygame.transform.scale(background,(width,height)) # Linnaea Mallett
 
 # Set up the wolves' portrait images.
 topleft = pygame.image.load(os.path.join('Assets',"Aspen_Headshot.png"))
-#topcent = pygame.image.load(os.path.join('Assets',"Khewa_Headshot.png"))
-#toprite = pygame.image.load(os.path.join('Assets',"Mani_Headshot.png"))
-#basleft = pygame.image.load(os.path.join('Assets',"Nico_Headshot.png"))
-#bascent = pygame.image.load(os.path.join('Assets',"Sparrow_Headshot.png"))
+topcent = pygame.image.load(os.path.join('Assets',"Khewa_Headshot.png"))
+toprite = pygame.image.load(os.path.join('Assets',"Mani_Headshot.png"))
+basleft = pygame.image.load(os.path.join('Assets',"Nico_Headshot.png"))
+bascent = pygame.image.load(os.path.join('Assets',"Sparrow_Headshot.png"))
 basrite = pygame.image.load(os.path.join('Assets',"Timber_Headshot.png"))
 # Scale to uniform height without distorting.
 topleft = pygame.transform.scale(topleft,(int(height/3),int(height*topleft.get_height()/(3*topleft.get_width()))))
-#topcent = pygame.transform.scale(topcent,(int(height/3),int(height*topcent.get_height()/(3*topcent.get_width()))))
-#toprite = pygame.transform.scale(toprite,(int(height/3),int(height*toprite.get_height()/(3*toprite.get_width()))))
-#basleft = pygame.transform.scale(basleft,(int(height/3),int(height*basleft.get_height()/(3*basleft.get_width()))))
-#bascent = pygame.transform.scale(bascent,(int(height/3),int(height*bascent.get_height()/(3*bascent.get_width()))))
+topcent = pygame.transform.scale(topcent,(int(height/3),int(height*topcent.get_height()/(3*topcent.get_width()))))
+toprite = pygame.transform.scale(toprite,(int(height/3),int(height*toprite.get_height()/(3*toprite.get_width()))))
+basleft = pygame.transform.scale(basleft,(int(height/3),int(height*basleft.get_height()/(3*basleft.get_width()))))
+bascent = pygame.transform.scale(bascent,(int(height/3),int(height*bascent.get_height()/(3*bascent.get_width()))))
 basrite = pygame.transform.scale(basrite,(int(height/3),int(height*basrite.get_height()/(3*basrite.get_width()))))
 
 #Set up the indicators used to make choices - will use a three indicator style like settings menu
@@ -46,10 +46,10 @@ position1 = 0
 def drawscreen():
     screen.blit(background, (0,0))
     screen.blit(topleft,(int(width/6-topleft.get_width()/2),int(height/12)))
-#    screen.blit(topcent,(int(width/2-topcent.get_width()/2),int(height/12)))
-#    screen.blit(toprite,(int(5*width/6-toprite.get_width()/2),int(height/12)))
-#    screen.blit(basleft,(int(width/6-basleft.get_width()/2),int(7*height/12)))
-#    screen.blit(bascent,(int(width/2-bascent.get_width()/2),int(7*height/12)))
+    screen.blit(topcent,(int(width/2-topcent.get_width()/2),int(height/12)))
+    screen.blit(toprite,(int(5*width/6-toprite.get_width()/2),int(height/12)))
+    screen.blit(basleft,(int(width/6-basleft.get_width()/2),int(7*height/12)))
+    screen.blit(bascent,(int(width/2-bascent.get_width()/2),int(7*height/12)))
     screen.blit(basrite,(int(5*width/6-basrite.get_width()/2),int(7*height/12)))
     screen.blit(indicator1,positions1list[position1])
     pygame.display.update()
