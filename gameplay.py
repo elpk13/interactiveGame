@@ -17,8 +17,8 @@ halfwidth = width/2
 background = pygame.image.load(os.path.join('Assets_poc',"map_background.jpg"))
 worldx = background.get_width()
 worldy = background.get_height()
-uppery = worldy 
-upperx = worldx
+uppery = worldy - halfheight
+upperx = worldx - halfwidth
 print(uppery)
 print(upperx)
 # Load all player-related images.  For multiple characters, consider making this
@@ -67,9 +67,9 @@ def posok(x,y):
             return False
 #    if ((width/2 < x < worldx) and (height/2 < y < worldy)):
 #        return True
-    if(x<800 or x>4335):
+    if(x<halfwidth or x>upperx):
         return False
-    elif(y<450 or y>3143):
+    elif(y<halfheight or y>uppery):
         return False
     else:
         return True

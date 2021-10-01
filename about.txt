@@ -3,7 +3,16 @@
 
    Wolf Adventure was made in 2021.
 
-   If you can read this, then the About page is working.
+   This educational game is hosted on a Raspberry Pi and 
+   is written in Python utilizing the Pygame set of 
+   modules. 
+
+   There are six characters to choose from (one based on 
+   each of Wolf Park's current wolves) and three chapters
+   that allow players to choose which part of the wolf's 
+   life they would play during. The game can also be 
+   played sequentially. 
+
    This text can be updated (to include a complete list of
    image credits, etc.) by editing the text file "about.txt".
 
