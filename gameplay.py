@@ -48,6 +48,15 @@ framelists = [pframers,pframels,pframeus,pframeds]
 currentframes = [0,0,0,0]
 currentmode = 0
 
+bisonImage = pygame.image.load(os.path.join('Assets_poc',"temp_bison_print.png"))
+bisonImage = pygame.transform.scale(bisonImage,(int(height/15),int(height/15)))
+bisonPrints = []
+for i in range(50):
+    bisonPrints.append((random.randint(0,worldx),random.randint(0,worldy)))
+def takey(top):
+    return top[1]
+bisonPrints.sort(key=takey)
+
 # Populate the world with identical obstacles
 obstacleimage = pygame.image.load(os.path.join('Assets_poc',"temporary_tree.png"))
 obstacles = []
@@ -81,6 +90,8 @@ def drawscreen():
     screen.blit(background,(0,0),(int(playerx-width/2),int(playery-height/2),width,height))
     for obstacle in obstacles:
         screen.blit(obstacleimage, (int(obstacle[0]-playerx+width/2-obstacleimage.get_width()/2),int(obstacle[1]-playery+height/2-obstacleimage.get_height()/2)))
+    for bison in bisonPrints:
+        screen.blit(bisonImage, (int(bison[0]-playerx+width/2-bisonImage.get_width()/20),int(bison[1]-playery+height/2-bisonImage.get_height()/20)))
     playerimage = framelists[currentmode][currentframes[currentmode]]
     screen.blit(playerimage,(int(width/2-playerimage.get_width()/2),int(height/2-playerimage.get_height()/2)))
     pygame.display.update()
