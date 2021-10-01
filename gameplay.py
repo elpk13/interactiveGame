@@ -47,6 +47,7 @@ pframeds = [playerd1,playerd2,playerd3]
 framelists = [pframers,pframels,pframeus,pframeds]
 currentframes = [0,0,0,0]
 currentmode = 0
+hoofprint = 0 
 
 bisonImage = pygame.image.load(os.path.join('Assets_poc',"temp_bison_print.png"))
 bisonImage = pygame.transform.scale(bisonImage,(int(height/15),int(height/15)))
@@ -74,14 +75,22 @@ def posok(x,y):
     for ob in obstacles:
         if abs(x-ob[0]) < obstacleimage.get_width()/2 and abs(y-ob[1]) < obstacleimage.get_height()/2:
             return False
-#    if ((width/2 < x < worldx) and (height/2 < y < worldy)):
-#        return True
+    for bis in bisonPrints:
+        if abs(x-bis[0]) < bisonImage.get_width()/2 and abs(y-bis[1]) < bisonImage.get_height()/2:
+            return False
     if(x<halfwidth or x>upperx):
         return False
     elif(y<halfheight or y>uppery):
         return False
     else:
         return True
+
+def printCol(x,y):
+    for bis in bisonPrints:
+        if abs(x-bis[0]) < bisonImage.get_width()/2 and abs(y-bis[1]) < bisonImage.get_height()/2:
+            return True
+        else:
+            return False
 
 # The familiar drawscreen method places the relevant part of the background
 # over the screen, then superlays obstacles, then places the relevant frame
@@ -153,6 +162,10 @@ while runninggame:
                 currentframes[currentmode] = 0
         else:
             currentframes = [0,0,0,0] # If player doesn't move, return to
+    elif printCol(newposx,newposy):
+        currentFrames = [0,0,0,0]
+        import hunt
+        drawscreen()
     else:                             # stationary player.
         currentframes = [0,0,0,0] # If player cannot move, return to stationary.
 
