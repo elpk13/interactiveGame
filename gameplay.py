@@ -10,12 +10,17 @@ pygame.init()
 height = 900 # Set the dimensions of the screen, which determines how
 width = 1200 # much of the world is shown.
 screen = pygame.display.set_mode((width,height))
+halfheight = height/2
+halfwidth = width/2
 
 # World size determined by dimensions of background image.
 background = pygame.image.load(os.path.join('Assets_poc',"map_background.jpg"))
 worldx = background.get_width()
 worldy = background.get_height()
-
+uppery = worldy 
+upperx = worldx
+print(uppery)
+print(upperx)
 # Load all player-related images.  For multiple characters, consider making this
 # a large tree function in its own script.
 # Player images go into four lists:  a list of right-moving frames, left-moving,
@@ -60,7 +65,14 @@ def posok(x,y):
     for ob in obstacles:
         if abs(x-ob[0]) < obstacleimage.get_width()/2 and abs(y-ob[1]) < obstacleimage.get_height()/2:
             return False
-    return True
+#    if ((width/2 < x < worldx) and (height/2 < y < worldy)):
+#        return True
+    if(x<800 or x>4335):
+        return False
+    elif(y<450 or y>3143):
+        return False
+    else:
+        return True
 
 # The familiar drawscreen method places the relevant part of the background
 # over the screen, then superlays obstacles, then places the relevant frame
