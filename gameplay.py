@@ -14,40 +14,59 @@ halfheight = height/2
 halfwidth = width/2
 
 # World size determined by dimensions of background image.
-background = pygame.image.load(os.path.join('Assets_poc',"map_background.jpg"))
+background = pygame.image.load(os.path.join('Assets',"map_background.jpg"))
 worldx = background.get_width()
 worldy = background.get_height()
 uppery = worldy - halfheight
 upperx = worldx - halfwidth
-print(uppery)
-print(upperx)
-# Load all player-related images.  For multiple characters, consider making this
-# a large tree function in its own script.
+#print(uppery)
+#print(upperx)
+
+# Load all player-related images.
 # Player images go into four lists:  a list of right-moving frames, left-moving,
 # up-moving, and down-moving.  Each can be any length.  First frame should be
-# a balanced look for player.
-playerr1 = pygame.image.load(os.path.join('Assets_poc',"animation_1.png"))
-playerr2 = pygame.image.load(os.path.join('Assets_poc',"animation_2.png"))
-playerr3 = pygame.image.load(os.path.join('Assets_poc',"animation_3.png"))
-pframers = [playerr1,playerr2,playerr3]
-playerl1 = pygame.transform.flip(playerr1,True,False)
-playerl2 = pygame.transform.flip(playerr2,True,False)
-playerl3 = pygame.transform.flip(playerr3,True,False)
-pframels = [playerl1,playerl2,playerl3]
-playeru1 = pygame.image.load(os.path.join('Assets_poc',"animation_1.png"))
-playeru2 = pygame.image.load(os.path.join('Assets_poc',"animation_2.png"))
-playeru3 = pygame.image.load(os.path.join('Assets_poc',"animation_3.png"))
-pframeus = [playeru1,playeru2,playeru3]
+# a balanced look for player, looping begins at third.
+settingsfile = open("settings.txt","r") # Retrieve current status of settings
+currentsettings = settingsfile.readlines() # from settings file.
+charid = int(currentsettings[2][0])
+settingsfile.close()
+charactername = ['Aspen','Khewa','Mani','Nico','Sparrow','Timber'][charid]
+
+# Load character graphics.  Commented lines can be uncommented when files are
+# ready.  Currently, only playable character is Mani.
+pframers = []
+pframels = []
+pframeus = []
+#pframeds = []
+for f in range(1,9):
+    frame = pygame.image.load(os.path.join('Animation work',charactername + '_Walking_Right000' + str(f) + '.png'))
+    frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
+    pframers.append(frame)
+    frame = pygame.transform.flip(frame,True,False)
+    pframels.append(frame)
+    frame = pygame.image.load(os.path.join('Animation work',charactername + '_Walking_Forward000' + str(f) + '.png'))
+    frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
+    pframeus.append(frame)
+    #frame = pygame.image.load(os.path.join('Animation work',charactername + '_walking_Away000' + str(f) + '.png'))
+    #frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
+    #pframeds.append(frame)
+
+# These lines can be eliminated when new files are in.
 playerd1 = pygame.image.load(os.path.join('Assets_poc',"animation_1.png"))
 playerd2 = pygame.image.load(os.path.join('Assets_poc',"animation_2.png"))
 playerd3 = pygame.image.load(os.path.join('Assets_poc',"animation_3.png"))
 pframeds = [playerd1,playerd2,playerd3]
+
 # The current frame in any list is stored in the list current frames.
 # Currentmode refers to which direction the player is depicted facing.
 framelists = [pframers,pframels,pframeus,pframeds]
 currentframes = [0,0,0,0]
 currentmode = 0
-hoofprint = 0 
+
+if charactername == "Mani":
+    charactername = "Máni"  # Don't change until files are loaded.
+
+hoofprint = 0
 
 bisonImage = pygame.image.load(os.path.join('Assets_poc',"temp_bison_print.png"))
 bisonImage = pygame.transform.scale(bisonImage,(int(height/15),int(height/15)))
@@ -58,22 +77,25 @@ def takey(top):
     return top[1]
 bisonPrints.sort(key=takey)
 
-# Populate the world with identical obstacles
-obstacleimage = pygame.image.load(os.path.join('Assets_poc',"temporary_tree.png"))
-obstacles = []
+# Populate the world with arbitrary obstacles of assorted types and sizes.
+obstacleImages = [pygame.image.load(os.path.join('Assets',"pine_tree.png")),
+pygame.image.load(os.path.join('Assets',"oak_tree.png"))]
+obstacleLocations = []
+obstacleTypes = []
 for i in range(100):
-    obstacles.append((random.randint(0,worldx),random.randint(0,worldy)))
+    obstacleLocations.append((random.randint(0,worldx),random.randint(0,worldy)))
+    obstacleTypes.append(random.randint(0,len(obstacleImages)-1))
 def takey(tup): # Sort list of obstacles so that they blit from top to bottom.
     return tup[1]
-obstacles.sort(key=takey)
+obstacleLocations.sort(key=takey)
 
 # For moving the player, this function determines whether any point is within
 # an obstacle's blit box.  For multiple barriers, consider passing a list argument
 # containing a list of tuples which are lists of coordinates and the object corresponding
 # to each list.
 def posok(x,y):
-    for ob in obstacles:
-        if abs(x-ob[0]) < obstacleimage.get_width()/2 and abs(y-ob[1]) < obstacleimage.get_height()/2:
+    for ob in range(len(obstacleLocations)):
+        if abs(x-obstacleLocations[ob][0]) < obstacleImages[obstacleTypes[ob]].get_width()/2 and abs(y-obstacleLocations[ob][1]) < obstacleImages[obstacleTypes[ob]].get_height()/2:
             return False
     for bis in bisonPrints:
         if abs(x-bis[0]) < bisonImage.get_width()/2 and abs(y-bis[1]) < bisonImage.get_height()/2:
@@ -97,8 +119,8 @@ def printCol(x,y):
 # of the player.
 def drawscreen():
     screen.blit(background,(0,0),(int(playerx-width/2),int(playery-height/2),width,height))
-    for obstacle in obstacles:
-        screen.blit(obstacleimage, (int(obstacle[0]-playerx+width/2-obstacleimage.get_width()/2),int(obstacle[1]-playery+height/2-obstacleimage.get_height()/2)))
+    for ob in range(len(obstacleLocations)):
+        screen.blit(obstacleImages[obstacleTypes[ob]], (int(obstacleLocations[ob][0]-playerx+width/2-obstacleImages[obstacleTypes[ob]].get_width()/2),int(obstacleLocations[ob][1]-playery+height/2-obstacleImages[obstacleTypes[ob]].get_height()/2)))
     for bison in bisonPrints:
         screen.blit(bisonImage, (int(bison[0]-playerx+width/2-bisonImage.get_width()/20),int(bison[1]-playery+height/2-bisonImage.get_height()/20)))
     playerimage = framelists[currentmode][currentframes[currentmode]]
@@ -159,7 +181,7 @@ while runninggame:
             if currentframes[currentmode] != len(framelists[currentmode]) - 1:
                 currentframes[currentmode] += 1
             else:
-                currentframes[currentmode] = 0
+                currentframes[currentmode] = 2 # Reset to third frame to loop
         else:
             currentframes = [0,0,0,0] # If player doesn't move, return to
     elif printCol(newposx,newposy):
