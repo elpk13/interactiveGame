@@ -42,6 +42,10 @@ positions1list = [(int(width/6)-indicator1rad,ypos1),(int(width/2)-indicator1rad
     (int(width/6)-indicator1rad,ypos2),(int(width/2)-indicator1rad,ypos2),(int(5*width/6)-indicator1rad,ypos2)]
 position1 = 0
 
+settingsfile = open("settings.txt",'r')
+currentsettings = settingsfile.readlines()
+settingsfile.close()
+
 # Blit background, then portraits, then indicator, and update screen.
 def drawscreen():
     screen.blit(background, (0,0))
@@ -73,6 +77,11 @@ while runningcyc:
                 position1 += 3
             drawscreen()
             if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                currentsettings[2] = str(position1)
+                settingsfile = open("settings.txt",'w')
+                for eachline in currentsettings:
+                    settingsfile.write(eachline)
+                settingsfile.close()
                 import cychap
                 drawscreen()
                 #move on to the next screen -> chapter selection
