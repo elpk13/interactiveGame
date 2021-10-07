@@ -10,8 +10,8 @@ pygame.init()
 
 # need to add selection between top and bottom sound -> how many paws is too many
 
-sliderColor = (204, 204, 255)
-lineColor = (0, 0, 0)
+#sliderColor = (204, 204, 255)
+#lineColor = (0, 0, 0)
 
 #the following lines set up the display window
 height = 900 # Set the dimensions of the screen, by which
@@ -34,8 +34,8 @@ indicator2 = pygame.image.load(os.path.join('Assets',"indicator_paw.png"))
 indicator2 = pygame.transform.scale(indicator2,(int(height/14),int(height/14)))
 indicator2 = pygame.transform.flip(indicator2,True,False)
 
-indicator3 = pygame.image.load(os.path.join('Assets',"indicator_paw.png"))
-indicator3 = pygame.transform.scale(indicator3,(int(height/14),int(height/14)))
+#indicator3 = pygame.image.load(os.path.join('Assets',"indicator_paw.png"))
+#indicator3 = pygame.transform.scale(indicator3,(int(height/14),int(height/14)))
 
 
 # Positions for indicators along sliders - all of which scale horizontally
@@ -46,11 +46,11 @@ for x in range(1,10):
     positionslist1.append((int(width/4+x*width/20 - indicator1.get_width()/2),int(height/2 - indicator1.get_height()/2)))
     positionslist2.append((int(width/4+x*width/20 - indicator1.get_width()/2),int(5*height/6 - indicator1.get_height()/2)))
 
-positionslist3 = [(int(7*width/9),int(height/3)),(int(7*width/9),int(2*height/3))]
+#positionslist3 = [(int(7*width/9),int(height/3)),(int(7*width/9),int(2*height/3))]
 
 position1 = 0 # Current position, indicated by place in positionslist
 position2 = 0
-position3 = 0
+position3 = 0 # pos3 indicates active indicator
 
 
 
@@ -80,11 +80,13 @@ settingsfile = open("settings.txt","r") # Retrieve current status of settings
 currentsettings = settingsfile.readlines() # from settings file.
 position1 = int(currentsettings[0][0])
 position2 = int(currentsettings[1][0])
+charid = int(currentsettings[2][0]) # Not to be edited by settings, as such,
+ # must be returned when file is rewritten.
 settingsfile.close()
 
 def updatesettingsfile(): # A function to pass the positions to the settings
     settingsfile = open("settings.txt","w") # status file.
-    settingsfile.write(str(position1)+"\n"+str(position2))
+    settingsfile.write(str(position1)+"\n"+str(position2)+"\n"+str(charid))
     settingsfile.close()
 
 drawscreen()
