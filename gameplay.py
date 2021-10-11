@@ -37,7 +37,7 @@ charactername = ['Aspen','Khewa','Mani','Nico','Sparrow','Timber'][charid]
 pframers = []
 pframels = []
 pframeus = []
-#pframeds = []
+pframeds = []
 for f in range(1,9):
     frame = pygame.image.load(os.path.join('Animation work',charactername + '_Walking_Right000' + str(f) + '.png'))
     frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
@@ -47,20 +47,14 @@ for f in range(1,9):
     frame = pygame.image.load(os.path.join('Animation work',charactername + '_Walking_Forward000' + str(f) + '.png'))
     frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
     pframeus.append(frame)
-    #frame = pygame.image.load(os.path.join('Animation work',charactername + '_walking_Away000' + str(f) + '.png'))
-    #frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
-    #pframeds.append(frame)
-
-# These lines can be eliminated when new files are in.
-playerd1 = pygame.image.load(os.path.join('Assets_poc',"animation_1.png"))
-playerd2 = pygame.image.load(os.path.join('Assets_poc',"animation_2.png"))
-playerd3 = pygame.image.load(os.path.join('Assets_poc',"animation_3.png"))
-pframeds = [playerd1,playerd2,playerd3]
+    frame = pygame.image.load(os.path.join('Animation work',charactername + '_walking_Away000' + str(f) + '.png'))
+    frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(7*frame.get_height())),int(height/7)))
+    pframeds.append(frame)
 
 # The current frame in any list is stored in the list current frames.
 # Currentmode refers to which direction the player is depicted facing.
 framelists = [pframers,pframels,pframeus,pframeds]
-currentframes = [0,0,0,0]
+currentframe = 0
 currentmode = 0
 
 if charactername == "Mani":
@@ -123,7 +117,7 @@ def drawscreen():
         screen.blit(obstacleImages[obstacleTypes[ob]], (int(obstacleLocations[ob][0]-playerx+width/2-obstacleImages[obstacleTypes[ob]].get_width()/2),int(obstacleLocations[ob][1]-playery+height/2-obstacleImages[obstacleTypes[ob]].get_height()/2)))
     for bison in bisonPrints:
         screen.blit(bisonImage, (int(bison[0]-playerx+width/2-bisonImage.get_width()/20),int(bison[1]-playery+height/2-bisonImage.get_height()/20)))
-    playerimage = framelists[currentmode][currentframes[currentmode]]
+    playerimage = framelists[currentmode][currentframe]
     screen.blit(playerimage,(int(width/2-playerimage.get_width()/2),int(height/2-playerimage.get_height()/2)))
     pygame.display.update()
 
@@ -178,18 +172,18 @@ while runninggame:
         playerx,playery = newposx,newposy # Player position changes;
         # Newpos variables now reflect current position.
         if dist > 0: # If player moves, update animation frame in list.
-            if currentframes[currentmode] != len(framelists[currentmode]) - 1:
-                currentframes[currentmode] += 1
+            if currentframe != len(framelists[currentmode]) - 1:
+                currentframe += 1
             else:
-                currentframes[currentmode] = 2 # Reset to third frame to loop
+                currentframe = 2 # Reset to third frame to loop
         else:
-            currentframes = [0,0,0,0] # If player doesn't move, return to
+            currentframe = 0 # If player doesn't move, return to
     elif printCol(newposx,newposy):
-        currentFrames = [0,0,0,0]
+        currentframe = 0
         import hunt
         drawscreen()
     else:                             # stationary player.
-        currentframes = [0,0,0,0] # If player cannot move, return to stationary.
+        currentframe = 0 # If player cannot move, return to stationary.
 
     pygame.time.delay(frametime)
     drawscreen()
