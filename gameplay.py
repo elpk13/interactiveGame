@@ -93,7 +93,9 @@ def posok(x,y):
             return False
     for bis in bisonPrints:
         if abs(x-bis[0]) < bisonImage.get_width()/2 and abs(y-bis[1]) < bisonImage.get_height()/2:
-            return False
+            global hoofprint
+            hoofprint = 1
+            return True
     if(x<halfwidth or x>upperx):
         return False
     elif(y<halfheight or y>uppery):
@@ -160,6 +162,9 @@ while runninggame:
         newposy = playery + (newposy - playery)*speed/dist
     # Newpos variables now indicate the desired position of the player in the
     # next frame.
+    global resp
+    resp = 3
+    
     if posok(newposx,newposy):
         if newposx > playerx:   # When choosing the direction to face the
             currentmode = 0     # player, left and right are prioritized for
@@ -169,6 +174,11 @@ while runninggame:
             currentmode = 2
         elif newposy < playery:
             currentmode = 3
+        elif hoofprint:
+            currentframe = 0
+            import dialog           
+            resp = dialog.dialog(600,400,"What would you like to do about the print that was found",['Howl for the pack - Group Hunt','Hunt alone','Run Away','Ignore'],bisonImage)
+            hoofprint = False
         playerx,playery = newposx,newposy # Player position changes;
         # Newpos variables now reflect current position.
         if dist > 0: # If player moves, update animation frame in list.
@@ -178,10 +188,18 @@ while runninggame:
                 currentframe = 2 # Reset to third frame to loop
         else:
             currentframe = 0 # If player doesn't move, return to
-    elif printCol(newposx,newposy):
-        currentframe = 0
-        import hunt
-        drawscreen()
+        if resp == 0:
+            #group hunt
+            drawscreen()
+        elif resp == 1:
+            import cyc
+            drawscreen()
+        elif resp == 2:
+            #remove tracks
+            drawscreen()
+        elif resp == 3:
+            #ignore
+            drawscreen()
     else:                             # stationary player.
         currentframe = 0 # If player cannot move, return to stationary.
 
