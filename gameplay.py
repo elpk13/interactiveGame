@@ -39,15 +39,15 @@ pframels = []
 pframeus = []
 pframeds = []
 for f in range(1,9):
-    frame = pygame.image.load(os.path.join('Animation work',charactername + '_Walking_Right000' + str(f) + '.png'))
+    frame = pygame.image.load(os.path.join('Animations',charactername + '_Walking_Right000' + str(f) + '.png'))
     frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
     pframers.append(frame)
     frame = pygame.transform.flip(frame,True,False)
     pframels.append(frame)
-    frame = pygame.image.load(os.path.join('Animation work',charactername + '_Walking_Forward000' + str(f) + '.png'))
+    frame = pygame.image.load(os.path.join('Animations',charactername + '_Walking_Forward000' + str(f) + '.png'))
     frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
     pframeus.append(frame)
-    frame = pygame.image.load(os.path.join('Animation work',charactername + '_walking_Away000' + str(f) + '.png'))
+    frame = pygame.image.load(os.path.join('Animations',charactername + '_walking_Away000' + str(f) + '.png'))
     frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(7*frame.get_height())),int(height/7)))
     pframeds.append(frame)
 
