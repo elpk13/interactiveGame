@@ -72,6 +72,20 @@ for i in range(50):
     bisonPrints.append((random.randint(0,worldx),random.randint(0,worldy)))
 bisonPrints.sort(key=lambda x : x[1])
 
+rabbitImage = pygame.image.load(os.path.join('Assets_poc',"rabbit print.png"))
+rabbitImage = pygame.transform.scale(rabbitImage,(int(height/10),int(height/10)))
+rabbitPrints = []
+for i in range(50):
+    rabbitPrints.append((random.randint(0,worldx),random.randint(0,worldy)))
+rabbitPrints.sort(key=lambda x : x[1])
+
+deerImage = pygame.image.load(os.path.join('Assets_poc',"deer print.png"))
+deerImage = pygame.transform.scale(deerImage,(int(height/15),int(height/10)))
+deerPrints = []
+for i in range(50):
+    deerPrints.append((random.randint(0,worldx),random.randint(0,worldy)))
+deerPrints.sort(key=lambda x : x[1])
+
 # Populate the world with arbitrary obstacles of assorted types and sizes.
 obstacleImages = [pygame.image.load(os.path.join('Assets',"pine_tree.png")),
 pygame.image.load(os.path.join('Assets',"oak_tree.png"))]
@@ -116,10 +130,14 @@ def printCol(x,y):
 # of the player.
 def drawscreen():
     screen.blit(background,(0,0),(int(playerx-width/2),int(playery-height/2),width,height))
-    for ob in range(len(obstacleLocations)):
-        screen.blit(obstacleImages[obstacleTypes[ob]], (int(obstacleLocations[ob][0]-playerx+width/2-obstacleImages[obstacleTypes[ob]].get_width()/2),int(obstacleLocations[ob][1]-playery+height/2-obstacleImages[obstacleTypes[ob]].get_height()/2)))
     for bison in bisonPrints:
         screen.blit(bisonImage, (int(bison[0]-playerx+width/2-bisonImage.get_width()/20),int(bison[1]-playery+height/2-bisonImage.get_height()/20)))
+    for rabbit in rabbitPrints:
+        screen.blit(rabbitImage, (int(rabbit[0]-playerx+width/2-rabbitImage.get_width()/20),int(rabbit[1]-playery+height/2-rabbitImage.get_height()/20)))
+    for deer in deerPrints:
+        screen.blit(deerImage, (int(deer[0]-playerx+width/2-deerImage.get_width()/20),int(deer[1]-playery+height/2-deerImage.get_height()/20)))
+    for ob in range(len(obstacleLocations)):
+        screen.blit(obstacleImages[obstacleTypes[ob]], (int(obstacleLocations[ob][0]-playerx+width/2-obstacleImages[obstacleTypes[ob]].get_width()/2),int(obstacleLocations[ob][1]-playery+height/2-obstacleImages[obstacleTypes[ob]].get_height()/2)))
     playerimage = framelists[currentmode][currentframe]
     screen.blit(playerimage,(int(width/2-playerimage.get_width()/2),int(height/2-playerimage.get_height()/2)))
     pygame.display.update()
