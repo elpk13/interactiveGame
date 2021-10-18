@@ -3,6 +3,7 @@ import pygame
 import random
 import os
 import math
+from elements import *
 
 pygame.init()
 
@@ -39,6 +40,7 @@ pframels = []
 pframeus = []
 pframeds = []
 for f in range(1,9):
+    charactername = 'Nico'
     frame = pygame.image.load(os.path.join('Animations',charactername + '_Walking_Right000' + str(f) + '.png'))
     frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
     pframers.append(frame)
@@ -61,15 +63,14 @@ if charactername == "Mani":
     charactername = "Máni"  # Don't change until files are loaded.
 
 hoofprint = 0
+pos_hoofprint_visited = {}
 
 bisonImage = pygame.image.load(os.path.join('Assets_poc',"temp_bison_print.png"))
 bisonImage = pygame.transform.scale(bisonImage,(int(height/15),int(height/15)))
 bisonPrints = []
 for i in range(50):
     bisonPrints.append((random.randint(0,worldx),random.randint(0,worldy)))
-def takey(top):
-    return top[1]
-bisonPrints.sort(key=takey)
+bisonPrints.sort(key=lambda x : x[1])
 
 # Populate the world with arbitrary obstacles of assorted types and sizes.
 obstacleImages = [pygame.image.load(os.path.join('Assets',"pine_tree.png")),
@@ -93,15 +94,15 @@ def posok(x,y):
             return False
     for bis in bisonPrints:
         if abs(x-bis[0]) < bisonImage.get_width()/2 and abs(y-bis[1]) < bisonImage.get_height()/2:
-            global hoofprint
-            hoofprint = 1
-            return True
+            if bis not in pos_hoofprint_visited:
+                pos_hoofprint_visited[bis] = True
+            return bis
     if(x<halfwidth or x>upperx):
         return False
     elif(y<halfheight or y>uppery):
         return False
     else:
-        return True
+        return (x,y)
 
 def printCol(x,y):
     for bis in bisonPrints:
@@ -154,6 +155,10 @@ while runninggame:
         newposy -= 1
     if pressed[pygame.K_DOWN]:
         newposy += 1
+    if pressed[pygame.K_RETURN]:
+        speed = 40
+    else:
+        speed = 10
     # Newpos variables currently indicate only the direction of motion as a
     # vector of variable magnitude.
     dist = ((newposx-playerx)**2 + (newposy-playery)**2) ** 0.5
@@ -165,7 +170,8 @@ while runninggame:
     global resp
     resp = 3
     
-    if posok(newposx,newposy):
+    obj = posok(newposx,newposy) # returns a (x,y) coordinate if a collision occurred, else None
+    if obj:
         if newposx > playerx:   # When choosing the direction to face the
             currentmode = 0     # player, left and right are prioritized for
         elif newposx < playerx: # diagonals, as in the Champion Island game.
@@ -174,11 +180,11 @@ while runninggame:
             currentmode = 2
         elif newposy < playery:
             currentmode = 3
-        elif hoofprint:
+        if obj in pos_hoofprint_visited and pos_hoofprint_visited[obj] == True:
             currentframe = 0
-            import dialog           
-            resp = dialog.dialog(600,400,"What would you like to do about the print that was found",['Howl for the pack - Group Hunt','Hunt alone','Run Away','Ignore'],bisonImage)
-            hoofprint = False
+            import dialog
+            resp = dialog.dialog(width,height,"What would you like to do about the print that was found",['Howl for the pack - Group Hunt','Hunt alone','Run Away','Ignore'],bisonImage)
+            pos_hoofprint_visited[obj] = False
         playerx,playery = newposx,newposy # Player position changes;
         # Newpos variables now reflect current position.
         if dist > 0: # If player moves, update animation frame in list.
