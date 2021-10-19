@@ -125,11 +125,22 @@ def printCol(x,y):
         else:
             return False
 
+def isNight(frames):
+    if (frames % 600) > 300:
+        return True
+    return False
+
 # The familiar drawscreen method places the relevant part of the background
 # over the screen, then superlays obstacles, then places the relevant frame
 # of the player.
 def drawscreen():
     screen.blit(background,(0,0),(int(playerx-width/2),int(playery-height/2),width,height))
+    if isNight(timelapsed):
+        for ob in range(len(obstacleLocations)):
+            screen.blit(obstacleNightImages[obstacleTypes[ob]], (int(obstacleLocations[ob][0]-playerx+width/2-obstacleNightImages[obstacleTypes[ob]].get_width()/2),int(obstacleLocations[ob][1]-playery+height/2-obstacleNightImages[obstacleTypes[ob]].get_height()/2)))
+    else:
+        for ob in range(len(obstacleLocations)):
+            screen.blit(obstacleImages[obstacleTypes[ob]], (int(obstacleLocations[ob][0]-playerx+width/2-obstacleImages[obstacleTypes[ob]].get_width()/2),int(obstacleLocations[ob][1]-playery+height/2-obstacleImages[obstacleTypes[ob]].get_height()/2)))
     for bison in bisonPrints:
         screen.blit(bisonImage, (int(bison[0]-playerx+width/2-bisonImage.get_width()/20),int(bison[1]-playery+height/2-bisonImage.get_height()/20)))
     for rabbit in rabbitPrints:
@@ -154,9 +165,10 @@ while not posok(playerx,playery):
 speed = 10 # pixels by which player moves in a frame
 frametime = 100 # milliseconds of each frame
 
-drawscreen()
-
 runninggame = True
+timelapsed = 0 # frames, ticks, tenths of a second
+
+drawscreen()
 
 while runninggame:
     for event in pygame.event.get():
@@ -187,7 +199,7 @@ while runninggame:
     # next frame.
     global resp
     resp = 3
-    
+
     obj = posok(newposx,newposy) # returns a (x,y) coordinate if a collision occurred, else None
     if obj:
         if newposx > playerx:   # When choosing the direction to face the
@@ -228,4 +240,9 @@ while runninggame:
         currentframe = 0 # If player cannot move, return to stationary.
 
     pygame.time.delay(frametime)
-    drawscreen()
+    timelapsed += 1
+    if timelapsed % 600 == 0:
+        background = pygame.image.load(os.path.join('Assets','map_background.jpg'))
+    elif timelapsed % 300 == 0:  # 'Light' refers to the dark version, because the function
+        background = pygame.image.load(os.path.join('Assets','map_background_light.jpg'))
+    drawscreen()                 # that made it lightens images by a scalar > 1.
