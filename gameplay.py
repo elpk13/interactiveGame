@@ -3,6 +3,7 @@ import pygame
 import random
 import os
 import math
+import dialog
 from elements import *
 
 pygame.init()
@@ -65,6 +66,7 @@ if charactername == "Mani":
 hoofprint = 0
 pos_hoofprint_visited = {}
 
+# Load animal print images and locate 50 of each throghout the map.
 bisonImage = pygame.image.load(os.path.join('Assets_poc',"temp_bison_print.png"))
 bisonImage = pygame.transform.scale(bisonImage,(int(height/15),int(height/15)))
 bisonPrints = []
@@ -100,6 +102,47 @@ def takey(tup): # Sort list of obstacles so that they blit from top to bottom.
     return tup[1]
 obstacleLocations.sort(key=takey)
 
+grassImages = [pygame.image.load(os.path.join('Assets',"grass1.png")),
+pygame.image.load(os.path.join('Assets',"grass2.png"))]
+grassLocations = []
+grassOffsets = []
+for i in range(200):
+    grassLocations.append((random.randint(0,worldx),random.randint(0,worldy)))
+    grassOffsets.append(random.randint(0,len(grassImages)))
+
+# Add a farm to some corner of the world.
+farmPic = pygame.image.load(os.path.join('Assets','farm.png'))
+sheepPics = [pygame.image.load(os.path.join('Assets','sheep.png')),
+pygame.image.load(os.path.join('Assets','sheep_down.png'))]
+farmLocation = random.choice([(0,0,farmPic.get_width(),farmPic.get_height()),
+(worldx-farmPic.get_width(),0,worldx,farmPic.get_height()),
+(0,worldy-farmPic.get_height(),farmPic.get_width(),worldy),
+(worldx-farmPic.get_width(),worldy-farmPic.get_height(),worldx,worldy)])
+#print(farmLocation)
+farmrectangle = (0.5,0.3,0.9,0.9)
+# farmrectangle refers to the portion of the image in which sheep may blit
+# their upper lefts; sheepPen is the left, down, width, and height of the
+# equivalent region on the map itself.
+sheepPen = (farmLocation[0]+farmrectangle[0]*farmPic.get_width(),
+farmLocation[1]+farmrectangle[1]*farmPic.get_height(),
+(farmrectangle[2]-farmrectangle[0])*farmPic.get_width(),
+(farmrectangle[3]-farmrectangle[1])*farmPic.get_height())
+sheepStates = []
+for i in range(5):
+    sheepStates.append([random.random(),random.random(),random.randint(0,1)])
+
+# When player is nearby, the sheep are shuffled around within the sheep pen.
+def moveSheep():
+    for eachSheep in sheepStates:
+        newsheepx = eachSheep[0] + random.random()/10 - 0.05
+        newsheepy = eachSheep[1] + random.random()/20 - 0.025
+        if 0 < newsheepx < 1:
+            eachSheep[0] = newsheepx
+        if 0 < newsheepy < 1:
+            eachSheep[1] = newsheepy
+        if random.random() > 0.8:
+            eachSheep[2] = random.randint(0,1)
+
 # For moving the player, this function determines whether any point is within
 # an obstacle's blit box.  For multiple barriers, consider passing a list argument
 # containing a list of tuples which are lists of coordinates and the object corresponding
@@ -113,6 +156,8 @@ def posok(x,y):
             if bis not in pos_hoofprint_visited:
                 pos_hoofprint_visited[bis] = True
             return bis
+    if x > farmLocation[0] and x < farmLocation[2] and y > farmLocation[1] and y < farmLocation[3]:
+        return False
     if(x<halfwidth or x>upperx):
         return False
     elif(y<halfheight or y>uppery):
@@ -151,8 +196,18 @@ def drawscreen():
         screen.blit(deerImage, (int(deer[0]-playerx+width/2-deerImage.get_width()/20),int(deer[1]-playery+height/2-deerImage.get_height()/20)))
     for ob in range(len(obstacleLocations)):
         screen.blit(obstacleImages[obstacleTypes[ob]], (int(obstacleLocations[ob][0]-playerx+width/2-obstacleImages[obstacleTypes[ob]].get_width()/2),int(obstacleLocations[ob][1]-playery+height/2-obstacleImages[obstacleTypes[ob]].get_height()/2)))
+    for gra in range(len(grassLocations)):
+        screen.blit(grassImages[(timelapsed + grassOffsets[gra]) % len(grassImages)],(int(grassLocations[gra][0]-playerx+width/2),int(grassLocations[gra][1]-playery+height/2)))
+    screen.blit(farmPic,(int(farmLocation[0]-playerx+width/2),int(farmLocation[1]-playery+height/2)))
+    for sheep in sheepStates:
+        screen.blit(sheepPics[sheep[2]],(int(sheepPen[0]+sheepPen[2]*sheep[0]-playerx+width/2),int(sheepPen[1]+sheepPen[3]*sheep[1]-playery+height/2)))
+
     playerimage = framelists[currentmode][currentframe]
     screen.blit(playerimage,(int(width/2-playerimage.get_width()/2),int(height/2-playerimage.get_height()/2)))
+    healthBarRect = pygame.Rect(int(5*width/6 - height/24),int(11*height/12),int(width*health/600),int(height/24))
+    healthBarOutline = pygame.Rect(int(5*width/6 - height/24 - width/300),int(11*height/12 - width/300),int(width/6 + width/150),int(height/24 + width/150))
+    pygame.draw.rect(screen,(255,255,255),healthBarOutline)
+    pygame.draw.rect(screen,(255,0,0),healthBarRect)
     pygame.display.update()
 
 # Pick random point where player starts.  Assume dimensions of map are greater
@@ -164,11 +219,29 @@ while not posok(playerx,playery):
     playerx = random.randint(width/2,worldx-width/2)
     playery = random.randint(height/2,worldy-height/2)
 
+# The following functions retrieve and set the health value to and from
+# the settings file.
+def readHealth():
+    settingsfile = open("settings.txt","r")
+    health = int(settingsfile.readlines()[3])
+    settingsfile.close()
+    return health
+
+def writeHealth():
+    settingsfile = open("settings.txt","r")
+    sets = settingfile.readlines()
+    settingsfile.close()
+    sets[3] = join(str(health),"\n")
+    settingsfile = open("settings.txt","w")
+    settingsfile.writelines(sets)
+    settingsfile.close()
+
 speed = 10 # pixels by which player moves in a frame
 frametime = 100 # milliseconds of each frame
 
 runninggame = True
 timelapsed = 0 # frames, ticks, tenths of a second
+health = readHealth() # In the first game, this should read "health = 100"
 
 drawscreen()
 
@@ -214,7 +287,6 @@ while runninggame:
             currentmode = 3
         if obj in pos_hoofprint_visited and pos_hoofprint_visited[obj] == True:
             currentframe = 0
-            import dialog
             resp = dialog.dialog(width,height,"What would you like to do about the print that was found",['Howl for the pack - Group Hunt','Hunt alone','Run Away','Ignore'],bisonImage)
             pos_hoofprint_visited[obj] = False
         playerx,playery = newposx,newposy # Player position changes;
@@ -240,7 +312,8 @@ while runninggame:
             drawscreen()
     else:                             # stationary player.
         currentframe = 0 # If player cannot move, return to stationary.
-
+    if timelapsed % 3 == 0 and (farmLocation[0] - playerx) ** 2 + (farmLocation[1] - playery) ** 2 < height ** 2 + width ** 2:
+        moveSheep() # If player is near farm, move the sheep.
     pygame.time.delay(frametime)
     timelapsed += 1
     if timelapsed % 600 == 0:
