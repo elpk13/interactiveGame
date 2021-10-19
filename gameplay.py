@@ -89,6 +89,8 @@ deerPrints.sort(key=lambda x : x[1])
 # Populate the world with arbitrary obstacles of assorted types and sizes.
 obstacleImages = [pygame.image.load(os.path.join('Assets',"pine_tree.png")),
 pygame.image.load(os.path.join('Assets',"oak_tree.png"))]
+obstacleNightImages = [pygame.image.load(os.path.join('Assets',"pine_tree_light.png")),
+pygame.image.load(os.path.join('Assets',"oak_tree_light.png"))]
 obstacleLocations = []
 obstacleTypes = []
 for i in range(100):
