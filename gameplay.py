@@ -229,9 +229,9 @@ def readHealth():
 
 def writeHealth():
     settingsfile = open("settings.txt","r")
-    sets = settingfile.readlines()
+    sets = settingsfile.readlines()
     settingsfile.close()
-    sets[3] = join(str(health),"\n")
+    sets[3] = ''.join([str(health),"\n"])
     settingsfile = open("settings.txt","w")
     settingsfile.writelines(sets)
     settingsfile.close()
