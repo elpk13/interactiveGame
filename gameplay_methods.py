@@ -130,7 +130,6 @@ def getworldfeatures(worldx,worldy,printImages,obstacleImages,passableImages,wor
 
     # Locate random array of footprints around the map.
     printData = []
-    print(len(printImages))
     for i in range(50*len(printImages)):
         printData.append([random.randint(0,len(printImages)-1),(random.randint(0,worldx),random.randint(0,worldy))])
     printData.sort(key=lambda x: x[1][1])
@@ -139,7 +138,6 @@ def getworldfeatures(worldx,worldy,printImages,obstacleImages,passableImages,wor
     for p in printData:
         printTypes.append(p[0])
         printLocations.append(p[1])
-    print(printTypes)
 
 # Populate the world with arbitrary obstacles of assorted types and sizes.
     obstacleData = []
@@ -346,8 +344,6 @@ frametime = 100 # milliseconds of each frame
 runninggame = True
 timelapsed = 0 # frames, ticks, tenths of a second
 health = readHealth() # In the first game, this should read "health = 100"
-
-print(printTypeCollideBoxes,printTypes)
 
 drawscreen(screen,height,width,background,timelapsed,playerx,playery,allImageLists,allNightImages,allTypeOffsetRanges,allLocations,allYs,allTypes,allOffsets,framelists,currentmode,currentframe,health)
 
