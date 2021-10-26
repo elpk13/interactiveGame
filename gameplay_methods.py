@@ -40,15 +40,15 @@ def getCharacter(): # Returns list of framelists for four animations and name.
     pframeus = [] # Each starts with standing and loops from the third frame.
     pframeds = []
     for f in range(1,9):
-        frame = pygame.image.load(os.path.join('Animations',charactername + '_Walking_Right000' + str(f) + '.png'))
+        frame = pygame.image.load(os.path.join('Animations',charactername,charactername + '_Walking_Right000' + str(f) + '.png'))
         frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
         pframers.append(frame)
         frame = pygame.transform.flip(frame,True,False)
         pframels.append(frame)
-        frame = pygame.image.load(os.path.join('Animations',charactername + '_Walking_Forward000' + str(f) + '.png'))
+        frame = pygame.image.load(os.path.join('Animations',charactername,charactername + '_Walking_Forward000' + str(f) + '.png'))
         frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
         pframeus.append(frame)
-        frame = pygame.image.load(os.path.join('Animations',charactername + '_walking_Away000' + str(f) + '.png'))
+        frame = pygame.image.load(os.path.join('Animations',charactername,charactername + '_walking_Away000' + str(f) + '.png'))
         frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(7*frame.get_height())),int(height/7)))
         pframeds.append(frame)
 
@@ -389,7 +389,7 @@ while runninggame:
     if col:
         allLocations[allLocations.index(printLocations[col-1])] = (0,-100) # If col, relocate the print in both lists
         printLocations[col-1] = (0,-100) # to where it won't blit.
-        resp = dialog.dialog(width,height,"What would you like to do about the print that was found",['Howl for the pack - Group Hunt','Hunt alone','Run Away','Ignore'],printImages[printTypes[col-1]][0])
+        resp = dialog.dialog(screen,"What would you like to do about the print that was found?",['Howl for the pack - Group Hunt','Hunt alone','Run Away','Ignore'],printImages[printTypes[col-1]][0])
         if resp == 0:
             # Pack hunt
             # Let's go hunt do do do do do do do, let's go hunt do do do do do do do
