@@ -70,32 +70,34 @@ def getworldgraphics(height): # Where height is the height of the world, used to
     for imagelist in printImages:
         printTypeCollideBoxes.append((0,0,imagelist[0].get_width(),imagelist[0].get_height()))
 
-    obstacleImages = [[pygame.image.load(os.path.join('Assets',"pine_tree.png")),
-    pygame.image.load(os.path.join('Assets',"pine_tree.png")),
-    pygame.image.load(os.path.join('Assets',"pine_tree.png"))],[pygame.image.load(os.path.join('Assets',"oak_tree.png")),
-    pygame.image.load(os.path.join('Assets',"oak_tree.png")), # Yes, that has to be that way.
-    pygame.image.load(os.path.join('Assets',"oak_tree.png"))],
-    [pygame.image.load(os.path.join('Assets','farm.png')),
+    obstacleImages = []
+    obstacleNightImages = []
+    for tree in ['Common_Ash_Summer','Spruce','White_Oak_Summer']:
+        treelist = []
+        treeNightlist = []
+        for i in range(1,8): # If the length of tree animations changes, change that here.
+            treelist.append(pygame.image.load(os.path.join('Animations','Trees',tree+'000'+str(i)+'.png')))
+            treeNightlist.append(pygame.image.load(os.path.join('Animations','Trees',tree+'000'+str(i)+'_light.png')))
+        obstacleImages.append(treelist)
+        obstacleNightImages.append(treeNightlist)
+    obstacleImages.append([pygame.image.load(os.path.join('Assets','farm.png')),
     pygame.image.load(os.path.join('Assets','farm.png')),
-    pygame.image.load(os.path.join('Assets','farm.png'))]]
-    obstacleNightImages = [[pygame.image.load(os.path.join('Assets',"pine_tree_light.png")),
-    pygame.image.load(os.path.join('Assets',"pine_tree_light.png")),
-    pygame.image.load(os.path.join('Assets',"pine_tree_light.png"))],
-    [pygame.image.load(os.path.join('Assets',"oak_tree_light.png")),
-    pygame.image.load(os.path.join('Assets',"oak_tree_light.png")),
-    pygame.image.load(os.path.join('Assets',"oak_tree_light.png"))],
-    [pygame.image.load(os.path.join('Assets','farm.png')),
+    pygame.image.load(os.path.join('Assets','farm.png'))])
+    obstacleNightImages.append([pygame.image.load(os.path.join('Assets','farm.png')),
     pygame.image.load(os.path.join('Assets','farm.png')),
-    pygame.image.load(os.path.join('Assets','farm.png'))]]
+    pygame.image.load(os.path.join('Assets','farm.png'))])
+                            
     obstacleTypeCollideBoxes = []
     for imagelist in obstacleImages:
         imageh, imagew = imagelist[0].get_height(), imagelist[0].get_width()
-        if obstacleImages.index(imagelist) != len(obstacleImages) - 1: # For trees, use these measures.
-            obstacleTypeCollideBoxes.append((0.4*imagew,0.8*imageh,0.6*imagew,0.9*imageh))
-        else:
+        if obstacleImages.index(imagelist) != len(obstacleImages) - 1: 
+            obstacleTypeCollideBoxes.append((0.4*imagew,0.8*imageh,0.6*imagew,0.9*imageh)) # For trees, use these measures.
+        else: # Above assumes all but the last object are trees with similar collision boxes.  For new obstacles, add new code.
             obstacleTypeCollideBoxes.append((0,0,imagew,imageh))
+    
+    # Alternative below is deprecated.
     # Alternative to above, in case we want more tree types and a varying sample.
-    #treeTypes = ['oak','pine','birch','ash','walnut','sycamore','tulip']
+    #treeTypes = ['oak','pine','birch','ash','walnut','sycamore','tulip'] # Edit to match chosen tree names.
     #numTreeTypes = random.randint(5,7)
     #treeChoices = random.sample(treeTypes,numTreeTypes)
     #obstacleImages = []
@@ -224,6 +226,19 @@ def isNight(frames):
     if (frames % 600) > 300:
         return True
     return False
+
+def timeToFrame(n,t): # This function picks a frame in a tree animation for a given time,
+   m = int(n/2 - 0.5) # where 'n' is the number of frames in the animation, t is the time
+   t = t % (8*m)      # (presumably with offset added).  Output should resemble:
+   if t % (4*m) < 2*m: #           #
+     return m          #          # #
+   if t < 3*m:         ####   ####   # periodically, so middle frame should be the 'steady'
+     return t-m        #   # #         view.  Also valid for n odd, but last frame is ignored.
+   if t < 4*m:         #    #
+     return 5*m - t 
+   if t < 7*m: 
+     return 7*m - t 
+   return t - 7*m
 
 # This function contains code that was in drawscreen() but only needs to run at the beginning.
 def prepgraphics(printLocations,printTypes,printImages,obstacleLocations,obstacleTypes,obstacleImages,obstacleNightImages,obstacleOffsets,passableLocations,passableTypes,passableImages,passableNightImages,passableOffsets):
