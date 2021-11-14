@@ -1,21 +1,23 @@
+About this game:
 
-   About this game:
+Wolf Adventure was made in 2021.
 
-   Wolf Adventure was made in 2021.
+What a funny sight it is to see a brood of ducklings with a hen!
 
-   This educational game is hosted on a Raspberry Pi and 
-   is written in Python utilizing the Pygame set of 
-   modules. 
+-Listen to the story of Jemima Puddle-duck, who was annoyed because the farmer's
+wife would not let her hatch her own eggs.
 
-   There are six characters to choose from (one based on 
-   each of Wolf Park's current wolves) and three chapters
-   that allow players to choose which part of the wolf's 
-   life they would play during. The game can also be 
-   played sequentially. 
+Her sister-in-law, Mrs. Rebeccah Puddle-duck, was perfectly willing to leave the
+hatching to some one else --"I have not the patience to sit on a nest for twenty-
+eight days; and no more have you, Jemima.  You would let them go cold; you know
+you would!"
 
-   This text can be updated (to include a complete list of
-   image credits, etc.) by editing the text file "about.txt".
+"I wish to hatch my own eggs; I will hatch them all by myself," quacked Jemima
+Puddle-duck.
 
-   The properties of this text can be edited in "about.py".
+She tried to hide her eggs; but they were always found and carried off.
 
-   Press spacebar to exit.
+Jemima Puddle-duck became quite desperate.  She determined to make a nest right
+away from the farm.
+
+Press spacebar to exit.
