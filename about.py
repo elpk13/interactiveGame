@@ -1,13 +1,18 @@
 # This script runs the 'about' page that can be accessed from  the main menu.
-import pygame
 
-# Open and read file of text to display.
-gameinfofile = open("about.txt","r")
-gameinfolines = gameinfofile.readlines()
+# Imports
+import pygame
+from dialog import linebreak # Dialog is our own script.
+from dialog import bliterate
 
 # Choose background colors and text colors.
 BACKGROUND_COLOR = (0,0,0)
 TEXT_COLOR = (200,200,200)
+
+# Open and read file of text to display.
+gameinfofile = open("about.txt","r")
+gameinfo = gameinfofile.read()
+gameinfofile.close()
 
 # This function does the work of placing the text.  It is a function
 # so that the surface on which things must be drawn, screen, can be
@@ -23,16 +28,19 @@ def displaygameinfo(screen):
     mainrectangle = pygame.Rect(left,down,width,height)
     pygame.draw.rect(screen,BACKGROUND_COLOR,mainrectangle)
 
+    myfont = pygame.font.SysFont('constantia',24)
+    bliterate(screen,gameinfo,left,down,width,height=height,buffer=20,font=myfont)
+    
     # Each line of text is to be placed in a new rectangle.
     # Python/pygame does not conveniently handle line breaks.
-    newrectangle = mainrectangle
-    myfont = pygame.font.SysFont('constantia',24)
-    for infoline in gameinfolines:
-        if len(infoline) > 0:
-            infoline = infoline[:-1] # Remove line break from end of line
-        textdisplay = myfont.render(infoline, True, (100,100,100),(0,0,0))
-        screen.blit(textdisplay,newrectangle)
-        newrectangle = newrectangle.move(0,textdisplay.get_height())
+    #newrectangle = mainrectangle
+
+    #for infoline in gameinfolines:
+    #    if len(infoline) > 0:
+    #        infoline = infoline[:-1] # Remove line break from end of line
+    #    textdisplay = myfont.render(infoline, True, (100,100,100),(0,0,0))
+    #    screen.blit(textdisplay,newrectangle)
+    #    newrectangle = newrectangle.move(0,textdisplay.get_height())
 
     pygame.display.update()
 
