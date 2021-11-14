@@ -5,9 +5,14 @@ import os
 # The linebreak function yields a list of image-type objects rendering a line
 # of the given text of the appropriate width.
 def linebreak(text,width,maxheight=0,font=pygame.font.SysFont('constantia',24),color=(239,228,176)):
-    text = text.replace('\n',' ')
-    text = text.replace('  ',' ')
-    words = text.split()
+    pars = text.split('\n\n')
+    for i in range(len(pars)):
+        par = pars[i]
+        par = par.replace('\n',' ')
+        par = par.replace('  ',' ')
+        pars[i] = par
+    text = ' \n '.join(pars)
+    words = text.split(' ') # This is NOT equivalent to text.split()
     lines = []
     line = words[0]
     if font.render(words[0],True,color).get_width() > width:
@@ -16,13 +21,19 @@ def linebreak(text,width,maxheight=0,font=pygame.font.SysFont('constantia',24),c
         if font.render(word,True,color).get_width() > width:
             return False
         linextend = ' '.join([line,word])
-        if font.render(linextend,True,color).get_width() > width:
+        if word == '\n':
             lines.append(font.render(line,True,color))
+            #lines.append(line)
+            line = ''
+        elif font.render(linextend,True,color).get_width() > width:
+            lines.append(font.render(line,True,color))
+            #lines.append(line)
             line = word
         else:
             line = linextend
     lines.append(font.render(line,True,color))
-    lineheight = font.render(line,True,color).get_height()
+    #lines.append(line)
+    lineheight = lines[0].get_height()
     if maxheight > 0 and lineheight*len(lines) > maxheight:
         return False
     else:
@@ -31,19 +42,21 @@ def linebreak(text,width,maxheight=0,font=pygame.font.SysFont('constantia',24),c
 # Bliterate takes a text string, line-breaks it, and blits it.
 # It yields the y-position ideal for blitting text beneath it,
 # as well as the width of the text block.
+# Buffer here is used between lines and between block edges - the
+# dialog method has its own buffers.
 def bliterate(screen,text,x,y,width,height=0,justify=False,buffer=0,font=pygame.font.SysFont('constantia',24),color=(239,228,176)):
-    lines = linebreak(text,width,height,font)
+    lines = linebreak(text,width-2*buffer,height-2*buffer,font)
     widths = []
     if lines == False: # Display error for lines if word too wide or text too tall.
         screen.blit(font.render('Error',True,(255,0,0)),(x,y))
     else:
-        runningheight = y
-        change = lines[0].get_height() + buffer
+        runningheight = y + buffer
+        change = int(lines[0].get_height() + buffer / 2)
         for line in lines:
             if justify:
                 screen.blit(line,(int(x+(width-line.get_width())/2),runningheight))
             else:
-                screen.blit(line,(x,runningheight))
+                screen.blit(line,(x+buffer,runningheight))
             widths.append(line.get_width())
             runningheight += change
     return runningheight, max(widths)
@@ -107,6 +120,10 @@ def dialog(screen,question,options,image=None,width=0.5,height=1/3):
                     return choice
                 drawscreen(runningwidth,runningheight,buffer,image)
 
+def akela(screen,text):
+    akelapic = pygame.image.load(os.path.join('Assets','Nico_Headshot.png'))
+    dialog(screen,'Akela',[text],akelapic)
+
 # Dialog test with long text.
 #testimage = pygame.image.load(os.path.join('Assets','Aspen_Headshot.png'))
 #screen = pygame.display.set_mode((1200,900))
@@ -131,3 +148,26 @@ def dialog(screen,question,options,image=None,width=0.5,height=1/3):
 #should be settled has grown up, possessed himself of a real horse, and trotted
 #away into the other world...''' # - from Charles Dickens's 'Bleak House'
 #print(linebreak(longtext,400))
+#print(longtext)
+
+#txtwbreaks = '''Of mans first disobedience, and the Fruit
+#
+#Of that forbidden Tree, whose mortal tast
+#
+#Brought Death into the World, and all our Woe,
+#
+#With loss of Eden, till one greater Man
+#
+#Restore us, and regain the blissful Seat,
+#
+#Sing Heav'nly Muse, that on the secret top
+#
+#Of Oreb, or of Sinai, didst inspire
+#
+#That Shepherd, who first taught the chosen Seed,
+#
+#In the Beginning how the Heav'ns and Earth
+#
+#Rose out of Chaos...''' # - from John Milton, 'Paradise Lost'
+#print(txtwbreaks)
+#print(linebreak(txtwbreaks,200))
