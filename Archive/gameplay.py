@@ -224,12 +224,7 @@ def writeHealth():
     settingsfile = open("settings.txt","r")
     sets = settingsfile.readlines()
     settingsfile.close()
-<<<<<<< HEAD
-#    this line shows up as an error on my computer?
-#    sets[3] = join(str(health),"\n")
-=======
     sets[3] = ''.join([str(health),"\n"])
->>>>>>> c1279a349af16909f099f20f5518e3c6c340a2a4
     settingsfile = open("settings.txt","w")
     settingsfile.writelines(sets)
     settingsfile.close()
