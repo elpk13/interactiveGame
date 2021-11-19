@@ -165,13 +165,6 @@ def posok(x,y):
     else:
         return (x,y)
 
-def printCol(x,y):
-    for bis in bisonPrints:
-        if abs(x-bis[0]) < bisonImage.get_width()/2 and abs(y-bis[1]) < bisonImage.get_height()/2:
-            return True
-        else:
-            return False
-
 def isNight(frames):
     if (frames % 600) > 300:
         return True
@@ -229,9 +222,10 @@ def readHealth():
 
 def writeHealth():
     settingsfile = open("settings.txt","r")
-    sets = settingfile.readlines()
+    sets = settingsfile.readlines()
     settingsfile.close()
-    sets[3] = join(str(health),"\n")
+#    this line shows up as an error on my computer?
+#    sets[3] = join(str(health),"\n")
     settingsfile = open("settings.txt","w")
     settingsfile.writelines(sets)
     settingsfile.close()
@@ -300,9 +294,10 @@ while runninggame:
             currentframe = 0 # If player doesn't move, return to
         if resp == 0:
             #group hunt
+            import huntg
             drawscreen()
         elif resp == 1:
-            import cyc
+            import hunts
             drawscreen()
         elif resp == 2:
             #remove tracks
