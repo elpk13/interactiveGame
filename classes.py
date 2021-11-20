@@ -47,6 +47,8 @@ class Obstacle(Object):
 class StreamSegment(Object): # appearance should come from the getStreamGraphics dictionary
     def __init__(self,xpos,ypos,height,width,dynamic,appearance,nightappearance,aim):
         self.aim = aim
+        if len(aim) < 4:
+            self.a = int(aim[:2])*math.pi/180 # Angle in radians as float, for straights and sources
         super().__init__(xpos,ypos,height,width,dynamic,appearance,nightappearance)
 
     def __str__(self):
@@ -58,13 +60,13 @@ class StreamSegment(Object): # appearance should come from the getStreamGraphics
         if not (0 < x < self.width and 0 < y < self.height):
             return False
         if self.aim in ['30','45','60']:
-            if y > x*math.tan(int(self.aim)) and y < x*math.tan(int(self.aim)) + 50/math.cos(int(self.aim)):
+            if y > x*math.tan(self.a) and y < x*math.tan(self.a) + 50/math.cos(self.a):
                 return True
             return False
         elif self.aim[-1] == 's':
             if ((x-self.width/2)**2+(y-self.height/2)**2)**0.5 < self.width/2:
                 return True
-            elif x < self.width/2 and y > x*math.tan(int(self.aim[:1])) and y < x*math.tan(int(self.aim[:1])) + 50/math.cos(int(self.aim[:1])):
+            elif x < self.width/2 and y > x*math.tan(self.a) and y < x*math.tan(self.a) + 50/math.cos(self.a):
                 return True
             return False
         else:
