@@ -106,7 +106,7 @@ def getWorldGraphics(window_height,worldx=0,worldy=0,bgname="Map_Background.png"
         treeGraphics = { } # Dictionary of framelists (one for each season) by type.
         treeNightGraphics = { }
         treeGreenness = { } # Dictionary of whether a tree is evergreen (same image in winter)
-        for type in ['White_Oak']: # List all non-evergreen trees here.
+        for type in ['White_Oak','Common_Ash']: # List all non-evergreen trees here.
             summerdays = []
             summernits = []
             autumndays = []
@@ -233,7 +233,7 @@ def generateWorld(worldx,worldy,background, nightbackground, streamAppearancesBy
     # through obstacles and decorations.
 
     mystreams = [] # Pourstream is sufficient; I didn't feel like making a whole subfunction for the multiple streams.
-    for s in range(2//random.randint(1,6)): # Maximum 2, but probably just one.
+    for s in range(2//random.randint(1,6)+1): # Maximum 3, but probably just one.
         mystreams.append(pourStream(worldx,worldy,streamAppearancesByAim,streamNightAppearancesByAim,streamDimensionsByAim))
 
     def forestWorld(worldx,worldy,treeTypes,streams,treeGraphics,treeNightGraphics,treeGreenness):
