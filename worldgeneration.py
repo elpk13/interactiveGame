@@ -93,11 +93,11 @@ def getWorldGraphics(window_height,worldx=0,worldy=0,bgname="Map_Background.png"
             def r(d): # Cool, a fourth-order nested function!
                 return int(d)*math.pi/180 # Converts degree-strings to radians.
             f = ( (t*math.tan(r(i))+t*math.tan(r(e))+2*w/math.cos(r(e))-2*t)/t**3 , (3*t-3*w/math.cos(r(e))-2*t*math.tan(r(e))-t*math.tan(r(i)))/t**2 , math.tan(r(e)) , w/math.cos(r(e)) )
-            g = ( (t*math.tan(r(i))+t*math.tan(r(e))+2*w/math.cos(r(i))-2*t)/t**3 , (3*t-3*w/math.cos(r(e))-2*t*math.tan(r(e))-t*math.tan(r(i)))/t**2 , math.tan(r(e)) , 0 )
+            g = ( (t*math.tan(r(i))+t*math.tan(r(e))+2*w/math.cos(r(i))-2*t)/t**3 , (3*t-3*w/math.cos(r(i))-2*t*math.tan(r(e))-t*math.tan(r(i)))/t**2 , math.tan(r(e)) , 0 )
             return f, g
         streamCurveCoefficients = { }
         for aim in ['30-45','30-60','45-30','45-60','60-30','60-45']:
-            streamCurveCoefficients[aim] = fg(300,50,aim[:1],aim[-2:])
+            streamCurveCoefficients[aim] = fg(300,50,aim[:2],aim[-2:])
         return streamCurveCoefficients
 
     streamCurveCoefficients = getStreamCurveCoefficients()
