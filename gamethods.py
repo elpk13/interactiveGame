@@ -33,14 +33,17 @@ def makescreen(): # Makes a screen per size in globals.txt
     return pygame.display.set_mode((readglobals()['window_width'],readglobals()['window_height']))
 
 # A helper method for drawScreen.
-def drawStream(screen,stream,playerx,playery,window_width,window_height,time,night):
+def drawStream(screen,stream,playerx,playery,window_width,window_height,time,night,scroll=True,leftx=0,topy=0):
     for segment in stream:
-        xpos = segment.xpos
         if abs(segment.xpos - playerx) < window_width and abs(segment.ypos - playery) < window_height:
             if night:
-                screen.blit(segment.nightappearance[time % len(segment.nightappearance)],(int(segment.xpos-playerx+window_width/2),int(segment.ypos-playery+window_height/2)))
+                appearance = segment.nightappearance[time % len(segment.nightappearance)]
             else:
-                screen.blit(segment.appearance[time % len(segment.appearance)],(int(segment.xpos-playerx+window_width/2),int(segment.ypos-playery+window_height/2)))
+                appearance = segment.appearance[time % len(segment.appearance)]
+            if scroll:
+                screen.blit(appearance,(int(segment.xpos-playerx+window_width/2),int(segment.ypos-playery+window_height/2)))
+            else:
+                screen.blit(appearance,(segment.xpos-leftx,segment.ypos-topy))
 
 def getYbaselist(objectlist): # Because I can't use a key in bisect, I have to use
     ybaselist = [] # this function to tell what is in front of and behind the
@@ -50,9 +53,11 @@ def getYbaselist(objectlist): # Because I can't use a key in bisect, I have to u
 
 # Method to draw the game screen for a given world, window, character,
 # location, and all other information.
-def drawScreen(screen,width,height,character,playerx,playery,world,ybaselist,time,night,health,currentmode,currentframe):
+def drawScreen(screen,width,height,characterappearance,playerx,playery,world,ybaselist,time,night,health,currentmode,currentframe):
+    ybaselist = getYbaselist(world.objectsofheight) # Recalculate each time?  Oh well.
+
     # Get player, use to find which objects to blit above and below.
-    playerimage = character.framelists[currentmode][currentframe]
+    playerimage = characterappearance[currentmode][currentframe]
     ydiff = playerimage.get_height()//2
     firstob = bisect.bisect(ybaselist,playery+ydiff-height)
     middleob = bisect.bisect(ybaselist,playery+ydiff)
@@ -67,17 +72,11 @@ def drawScreen(screen,width,height,character,playerx,playery,world,ybaselist,tim
         drawStream(screen,stream,playerx,playery,width,height,time,night)
     for o in range(firstob,middleob):
         if playerx - width < world.objectsofheight[o].xpos < playerx + width:
-            if isinstance(world.objectsofheight[o],Tree):
-                world.objectsofheight[o].draw(screen,playerx,playery,width,height,time,night)
-            else:
-                world.objectsofheight[o].draw(screen,playerx,playery,width,height,night)
+            world.objectsofheight[o].draw(screen,playerx,playery,width,height,night,time)
     screen.blit(playerimage,(int(width/2-playerimage.get_width()/2),int(height/2-playerimage.get_height()/2)))
     for o in range(middleob,lastob):
         if playerx - width < world.objectsofheight[o].xpos < playerx + width:
-            if isinstance(world.objectsofheight[o],Tree):
-                world.objectsofheight[o].draw(screen,playerx,playery,width,height,time,night)
-            else:
-                world.objectsofheight[o].draw(screen,playerx,playery,width,height,night)
+            world.objectsofheight[o].draw(screen,playerx,playery,width,height,night,time)
     # Health bar
     healthBarRect = pygame.Rect(int(5*width/6 - height/24),int(11*height/12),int(width*health/600),int(height/24))
     healthBarOutline = pygame.Rect(int(5*width/6 - height/24 - width/300),int(11*height/12 - width/300),int(width/6 + width/150),int(height/24 + width/150))
@@ -149,4 +148,21 @@ def writeHealth(health):
     settingsfile.writelines(sets)
     settingsfile.close()
 
-# Get character
+def getCharacterData(wolfGraphics):
+    settingsfile = open("settings.txt","r") # Retrieve current status of settings
+    currentsettings = settingsfile.readlines() # from settings file.
+    charid = int(currentsettings[2][0])
+    settingsfile.close() # Choose character and name.
+    charname = ['Aspen','Khewa','Máni','Nico','Sparrow','Timber'][charid]
+    charappearance = wolfGraphics[charname]
+    return charname, charappearance
+
+def addAnimal(world, animalGraphics):
+    x, y = random.randint(0,world.width), random.randint(0,world.height)
+    while not posok(x, y, world.obstacles):
+        x, y = random.randint(0,world.width), random.randint(0,world.height)
+    appearance = animalGraphics['rabbit']
+    newAnimal = Animal(x,y,appearance[0].get_width(),appearance[0].get_height(),appearance,'rabbit',5)
+    world.animals.append(newAnimal)
+    world.objectsofheight.append(newAnimal)
+    world.interactives.append(newAnimal)
