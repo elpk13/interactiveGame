@@ -35,38 +35,38 @@ def getWorldGraphics(window_height,worldx=0,worldy=0,bgname="Map_Background.png"
     worldx = background.get_width()
     worldy = background.get_height()
 
-    def getCharacter(height): # Returns list of framelists for four animations and name.
+    def getWolfGraphics(height): # Returns list of framelists for four animations and name.
         # Identity of the character determined from settings file edited by choice screen,
         # not passed to function.
-        settingsfile = open("settings.txt","r") # Retrieve current status of settings
-        currentsettings = settingsfile.readlines() # from settings file.
-        charid = int(currentsettings[2][0])
-        settingsfile.close() # Choose character and name.
-        charactername = ['Aspen','Khewa','Mani','Nico','Sparrow','Timber'][charid]
 
-        pframers = [] # Form list of animations.  One for right-walking, one for
-        pframels = [] # left-walking, one up, one down.
-        pframeus = [] # Each starts with standing and loops from the third frame.
-        pframeds = []
-        for f in range(1,9):
-            frame = pygame.image.load(os.path.join('Animations','Wolves',charactername,charactername + '_Walking_Right000' + str(f) + '.png'))
-            frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
-            pframers.append(frame)
-            frame = pygame.transform.flip(frame,True,False)
-            pframels.append(frame)
-            frame = pygame.image.load(os.path.join('Animations','Wolves',charactername,charactername + '_Walking_Forward000' + str(f) + '.png'))
-            frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
-            pframeus.append(frame)
-            frame = pygame.image.load(os.path.join('Animations','Wolves',charactername,charactername + '_walking_Away000' + str(f) + '.png'))
-            frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(7*frame.get_height())),int(height/7)))
-            pframeds.append(frame)
 
-        if charactername == "Mani":
-            charactername = "Máni"  # Accent mark not in filename.
+        wolfGraphics = { }
+        for wolfname in ['Mani']:
+            pframers = [] # Form list of animations.  One for right-walking, one for
+            pframels = [] # left-walking, one up, one down.
+            pframeus = [] # Each starts with standing and loops from the third frame.
+            pframeds = []
+            for f in range(1,9):
+                frame = pygame.image.load(os.path.join('Animations','Wolves',wolfname,wolfname + '_Walking_Right000' + str(f) + '.png'))
+                frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
+                pframers.append(frame)
+                frame = pygame.transform.flip(frame,True,False)
+                pframels.append(frame)
+                frame = pygame.image.load(os.path.join('Animations','Wolves',wolfname,wolfname + '_Walking_Forward000' + str(f) + '.png'))
+                frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
+                pframeus.append(frame)
+                frame = pygame.image.load(os.path.join('Animations','Wolves',wolfname,wolfname + '_walking_Away000' + str(f) + '.png'))
+                frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(7*frame.get_height())),int(height/7)))
+                pframeds.append(frame)
 
-        return Wolf(charactername,[pframers,pframels,pframeus,pframeds])
+            if wolfname == "Mani":
+                wolfname = "Máni"  # Accent mark not in filename.
 
-    character = getCharacter(window_height)
+            wolfGraphics[wolfname] = [pframers,pframels,pframeus,pframeds]
+
+        return wolfGraphics
+
+    wolfGraphics = getWolfGraphics(window_height)
 
     def getStreamGraphics():
         streamAppearancesByAim = { } # The 'aim' of a stream roughly refers to the
@@ -136,6 +136,38 @@ def getWorldGraphics(window_height,worldx=0,worldy=0,bgname="Map_Background.png"
 
     treeGraphics, treeNightGraphics, treeGreenness = getTreeGraphics()
 
+    def getRockGraphics(): # Any static obstacle is a rock.
+        rockGraphics = { }
+        rockNightGraphics = { }
+        for rocktype in ['limestone','nonrock']:
+            rockGraphics[rocktype] = pygame.image.load(os.path.join('Assets',rocktype+'.png'))
+            rockNightGraphics[rocktype] = pygame.image.load(os.path.join('Assets',rocktype+'_Night.png'))
+        return rockGraphics, rockNightGraphics
+
+    rockGraphics, rockNightGraphics = getRockGraphics()
+
+    def getDecorGraphics():
+        decorGraphics = { }
+        decorNightGraphics = { }
+        decorDynamics = { }
+        for dynamictype in ['grass']:
+            dynamicLengths = {'grass':7}
+            appearances = []
+            nightappearances = []
+            for i in range(1,dynamicLengths[dynamictype]+1):
+                appearances.append(pygame.image.load(os.path.join('Animations','Decorations',dynamictype+'000'+str(i)+'.png')))
+                nightappearances.append(pygame.image.load(os.path.join('Animations','Decorations',dynamictype+'000'+str(i)+'_Night.png')))
+            decorGraphics[dynamictype] = appearances
+            decorNightGraphics[dynamictype] = nightappearances
+            decorDynamics[dynamictype] = True
+        for statictype in ['flower1','flower2','flower3','flower4']:
+            decorGraphics[statictype] = pygame.image.load(os.path.join('Assets','Decorations',statictype+'.png'))
+            decorNightGraphics[statictype] = pygame.image.load(os.path.join('Assets','Decorations',statictype+'_Night.png'))
+            decorDynamics[statictype] = False
+        return decorGraphics, decorNightGraphics, decorDynamics
+
+    decorGraphics, decorNightGraphics, decorDynamics = getDecorGraphics()
+
     def getPrintGraphics(height): # Height is the height of the world, by which prints are scaled.
         printGraphics = { } # Prints, large and identifiable for dialogs
         printGraphicsSmall = { } # Blitted images in the world
@@ -162,13 +194,30 @@ def getWorldGraphics(window_height,worldx=0,worldy=0,bgname="Map_Background.png"
 
     printGraphics, printGraphicsSmall, animalTypes = getPrintGraphics(window_height)
 
-    return worldx, worldy, background, nightbackground, character, streamAppearancesByAim, streamNightAppearancesByAim, streamDimensionsByAim, streamCurveCoefficients, treeGraphics, treeNightGraphics, treeGreenness, printGraphics, printGraphicsSmall, animalTypes
+    def getAnimalGraphics(animalTypes):
+        animalGraphics = { }
+        for animal in animalTypes: # Iterate through the keys of dictionary animalTypes.
+            framers = []
+            framels = []
+            frameus = []
+            frameds = []
+            for frame in range(1,2):
+                framers.append(pygame.image.load(os.path.join('Animations','Animals',animal+'_right000'+str(frame)+'.png')))
+                framels.append(pygame.transform.flip(framers[-1],True,False))
+                frameus.append(pygame.image.load(os.path.join('Animations','Animals',animal+'_up000'+str(frame)+'.png')))
+                frameds.append(pygame.image.load(os.path.join('Animations','Animals',animal+'_down000'+str(frame)+'.png')))
+            animalGraphics[animal] = [framers,framels,frameus,frameds]
+        return animalGraphics
+
+    animalGraphics = getAnimalGraphics(animalTypes)
+
+    return worldx, worldy, background, nightbackground, wolfGraphics, streamAppearancesByAim, streamNightAppearancesByAim, streamDimensionsByAim, streamCurveCoefficients, treeGraphics, treeNightGraphics, treeGreenness, rockGraphics, rockNightGraphics, decorGraphics, decorNightGraphics, decorDynamics, printGraphics, printGraphicsSmall, animalTypes, animalGraphics
 
 # Observe that not all the output from the above function is input into that
 # below.  The character, the animalTypes dictionary, and the larger print graphics
 # are not necessary for the construction of the world.
 
-def generateWorld(worldx,worldy,background, nightbackground, streamAppearancesByAim, streamNightAppearancesByAim, streamDimensionsByAim, streamCurveCoefficients, treeGraphics, treeNightGraphics, treeGreenness, printGraphicsSmall):
+def generateWorld(worldx,worldy,background, nightbackground, streamAppearancesByAim, streamNightAppearancesByAim, streamDimensionsByAim, streamCurveCoefficients, treeGraphics, treeNightGraphics, treeGreenness, rockGraphics, rockNightGraphics, decorGraphics, decorNightGraphics, decorDynamics, printGraphicsSmall, animalGraphics):
     # The first part of this function, concerning sub-functions that initialize
     # user-defined classes.  Updates to classes probably need to be updated here.
 
@@ -220,6 +269,39 @@ def generateWorld(worldx,worldy,background, nightbackground, streamAppearancesBy
                     width = appearance[0][0].get_width()
                 return Tree(int(x-width/2),int(y-3*height/4),height,width,True,treeGraphics[type],treeNightGraphics[type],type,treeGreenness[type])
 
+    def placeRock(worldx,worldy,streams,rockGraphics,rockNightGraphics,rocktype=None):
+        while True:
+            x = random.randint(0,worldx)
+            y = random.randint(0,worldy)
+            if dry(x,y,streams):
+                if rocktype == None:
+                    rocktype = random.choice(list(rockGraphics))
+                appearance = rockGraphics[rocktype]
+                nightappearance = rockNightGraphics[rocktype]
+                return Rock(x,y,appearance.get_height(),appearance.get_width(),appearance,nightappearance)
+
+    def posok(x,y,obstacles):
+        for ob in obstacles:
+            if ob.collidesat(x,y):
+                return False
+        else:
+            return True
+
+    def growDecoration(worldx,worldy,streams,decorGraphics,decorNightGraphics,decorDynamics,decortype=None):
+        while True:
+            x = random.randint(0,worldx)
+            y = random.randint(0,worldy)
+            if dry(x,y,streams):
+                if decortype == None:
+                    decortype = random.choice(list(decorDynamics))
+                appearance = decorGraphics[decortype]
+                nightappearance = decorNightGraphics[decortype]
+                dynamicity = decorDynamics[decortype]
+                if dynamicity:
+                    return Decoration(x,y,appearance[0].get_height(),appearance[0].get_width(),True,appearance,nightappearance)
+                else:
+                    return Decoration(x,y,appearance.get_height(),appearance.get_width(),False,appearance,nightappearance)
+
     def stampPrint(worldx,worldy,animal,streams,printGraphicsSmall):
         while True:
             x = random.randint(0,worldx)
@@ -227,6 +309,9 @@ def generateWorld(worldx,worldy,background, nightbackground, streamAppearancesBy
             if dry(x,y,streams):
                 appearance = printGraphicsSmall[animal]
                 return Print(x,y,appearance.get_height(),appearance.get_width(),animal,appearance)
+
+    # The birthAnimal method, which initializes the animal class, is not here, as
+    # animals are not present in the default world.
 
     # The second part of this function concerns the placement of objects
     # initialized in the above code, beginning with streams and continuing
@@ -248,6 +333,24 @@ def generateWorld(worldx,worldy,background, nightbackground, streamAppearancesBy
 
     myforest = forestWorld(worldx,worldy,list(treeGraphics),mystreams,treeGraphics,treeNightGraphics,treeGreenness)
 
+    def setRocks(worldx,worldy,rockGraphics,rockNightGraphics,streams):
+        rocks = []
+        for i in range(10):
+            rocks.append(placeRock(worldx,worldy,streams,rockGraphics,rockNightGraphics,'limestone'))
+        for i in range(5):
+            rocks.append(placeRock(worldx,worldy,streams,rockGraphics,rockNightGraphics,'nonrock'))
+        return rocks
+
+    myrocks = setRocks(worldx,worldy,rockGraphics,rockNightGraphics,mystreams)
+
+    def decorate(worldx,worldy,decorGraphics,decorNightGraphics,decorDynamics,streams):
+        decorations = []
+        for i in range(50):
+            decorations.append(growDecoration(worldx,worldy,streams,decorGraphics,decorNightGraphics,decorDynamics))
+        return decorations
+
+    mydecorations = decorate(worldx,worldy,decorGraphics,decorNightGraphics,decorDynamics,mystreams)
+
     def leavePrints(worldx,worldy,printGraphicsSmall,streams):
         count = worldx*worldy // 1000000
         prints = []
@@ -257,8 +360,8 @@ def generateWorld(worldx,worldy,background, nightbackground, streamAppearancesBy
 
     myprints = leavePrints(worldx,worldy,printGraphicsSmall,mystreams)
 
-    return World(worldx,worldy,background,nightbackground,mystreams,myforest, [     ] ,myprints, [         ], [          ])
-#    return World(worldx,worldy,background,nightbackground,mystreams,myforest,myrocks,myprints,mydecorations,mysettlements)
+    return World(worldx,worldy,background,nightbackground,mystreams,myforest,myrocks,myprints,mydecorations, [          ],[       ])
+#    return World(worldx,worldy,background,nightbackground,mystreams,myforest,myrocks,myprints,mydecorations,mysettlements,myanimals)
 # When we iterate through a null list, it can only throw syntax errors.  Try:
 # for i in []:
 #     tom = turtle.Turtle()
