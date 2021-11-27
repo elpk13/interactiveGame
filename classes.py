@@ -1,4 +1,5 @@
 import math
+import random
 
 # Any object that exists in the world is of object class.
 class Object:
@@ -12,18 +13,21 @@ class Object:
         self.nightappearance = nightappearance
         self.ybase = ypos + height # Used for sorting blit order.
 
-    def draw(self,screen,playerx,playery,window_width,window_height,night):
+    def draw(self,screen,playerx,playery,window_width,window_height,night,time,scroll=True,leftx=0,topy=0):
         if night: # Night-time is defined in globals.  Seasons are defined in the tree class.
             if self.dynamic:
-                appearance = self.nightappearance[len(self.nightappearance)/time]
+                appearance = self.nightappearance[time % len(self.nightappearance)]
             else:
                 appearance = self.nightappearance
         else:
             if self.dynamic:
-                appearance = self.appearance[len(self.appearance)/time]
+                appearance = self.appearance[time % len(self.appearance)]
             else:
                 appearance = self.appearance
-        screen.blit(appearance,(int(self.xpos-playerx+window_width/2),int(self.ypos-playery+window_height/2)))
+        if scroll:
+            screen.blit(appearance,(int(self.xpos-playerx+window_width/2),int(self.ypos-playery+window_height/2)))
+        else:
+            screen.blit(appearance,(self.xpos-leftx,self.ypos-topy))
 
 # Objects that impede the player's movement have a collision box as well.
 # The 'collidesat' checks if a point is inside it.
@@ -84,7 +88,7 @@ class Tree(Obstacle): # The 'appearance' and 'evergreen' states should come from
     def __str__(self):
         return 'A(n) ' + self.type + ' tree at (' + self.xpos + ',' + self.ypos + ')'
 
-    def draw(self,screen,playerx,playery,window_width,window_height,time,night):
+    def draw(self,screen,playerx,playery,window_width,window_height,night,time,scroll=True,leftx=0,topy=0):
         if time % 2400 < 1200:
             s = 0 # And the leaves that are green...
         elif time % 2400 < 1800:
@@ -113,7 +117,10 @@ class Tree(Obstacle): # The 'appearance' and 'evergreen' states should come from
                 appearance = self.appearance[f]
             else:
                 appearance = self.appearance[s][f]
-        screen.blit(appearance,(int(self.xpos-playerx+window_width/2),int(self.ypos-playery+window_height/2)))
+        if scroll:
+            screen.blit(appearance,(int(self.xpos-playerx+window_width/2),int(self.ypos-playery+window_height/2)))
+        else:
+            screen.blit(appearance,(self.xpos-leftx,self.ypos-topy))
 
 class Rock(Obstacle): # Appearance can be any Surface.  Ideally one depicting a rock.
     def __init__(self,xpos,ypos,height,width,appearance,nightappearance):
@@ -132,18 +139,89 @@ class Interactive(Object):
             return True
         return False
 
-class Print(Interactive): # Apperance should come from dictionary
+class Print(Interactive): # Appearance should come from dictionary
     def __init__(self,xpos,ypos,height,width,animal,appearance):
         self.animal = animal
         super().__init__(xpos,ypos,height,width,False,appearance,appearance)
 
-class Wolf: # Consider making part of a general animal class for the hunting game?
-    def __init__(self,name,framelists):
+class Animal(Interactive): # *Every* animal should be a member of a subclass.
+    def __init__(self,xpos,ypos,height,width,appearance,species,speed):
+        self.species = species
+        self.speed = speed # Found in the initialization of the subclass.
+        self.currentmode = 0
+        self.currentframe = 0
+        self.health = 100
+        super().__init__(xpos,ypos,height,width,True,appearance,appearance)
+        self.ybase = ypos + height/2 # Co-ordinates of animals are different.
+
+    # Animals' x-positions and y-positions are unique in that they refer to the
+    # center of the animal and not the upper left corner.  As such, they intersect
+    # via a different method.
+    def covers(self,possiblex,possibley):
+        if self.xpos - self.width/2 < possiblex < self.xpos + self.width/2 and self.ypos - self.height/2 < possibley < self.ypos + self.height/2:
+            return True
+        return False
+
+    def posok(self,x,y,obstacles): # Every animal will need to check positions
+        for ob in obstacles: # in motion.
+            if ob.collidesat(x,y):
+                return False
+        else:
+            return True
+
+    # Animals are drawn differently, as they have four framelists and direction,
+    # and of course a different thing meant by xpos and ypos.
+    def draw(self,screen,playerx,playery,window_width,window_height,night,time,scroll=True,leftx=0,topy=0):
+        appearance = self.appearance[self.currentmode][self.currentframe]
+        if scroll:
+            screen.blit(appearance,(int(self.xpos-self.width/2-playerx+window_width/2),int(self.ypos-self.height/2-playery+window_height/2)))
+        else:
+            screen.blit(appearance,(self.xpos-self.width/2-leftx,self.ypos-self.height/2-topy))
+
+    def move(self,obstacles,animals,direction=135): # A default movement method, wherein "direction"
+        directionr = direction*math.pi/180 # is degrees counterclockwise from east.
+        newx = self.xpos + self.speed*math.cos(directionr) # Recall that positive
+        newy = self.ypos - self.speed*math.sin(directionr) # y is southwards.
+        while not self.posok(newx,newy,obstacles):
+            direction += 1
+            directionr = direction*math.pi/180
+            newx = self.xpos + self.speed*math.cos(directionr) # Recall that positive
+            newy = self.ypos - self.speed*math.sin(directionr) # y is southwards.
+        if direction <= 45 or direction >= 315: # Direction might later be calculated and this repeated.
+            self.currentmode = 0
+        elif direction >= 135 and direction <= 225:
+            self.currentmode = 1
+        elif direction < 180:
+            self.currentmode = 2
+        else:
+            self.currentmode = 3
+        if self.currentframe == len(self.appearance[self.currentmode]) - 1:
+            self.currentframe = 0
+        else:
+            self.currentframe += 1
+        self.xpos = newx
+        self.ypos = newy # Do not call draw - the drawScreen will do that.
+        self.ybase = newy + self.height
+
+class Rabbit(Animal): # Animals' subclasses should - but do not yet - have unique
+    def __init__(self,xpos,ypos,height,width,appearance): # move methods.
+        super().__init__(xpos,ypos,height,width,appearance,'rabbit',20)
+
+class Deer(Animal):
+    def __init__(self,xpos,ypos,height,width,appearance):
+        super().__init__(xpos,ypos,height,width,appearance,'deer',40)
+
+class Bison(Animal):
+    def __init__(self,xpos,ypos,height,width,appearance):
+        super().__init__(xpos,ypos,height,width,appearance,'bison',50)
+
+class Wolf(Animal): # Consider making part of a general animal class for the hunting game?
+    def __init__(self,xpos,ypos,height,width,appearance,name):
         self.name = name
-        self.framelists = framelists
+        super().__init__(xpos,ypos,height,width,appearance,'wolf',40)
 
 class World:
-    def __init__(self,worldx,worldy,background,nightbackground,streams,forest,rocks,prints,decorations,settlements):
+    def __init__(self,worldx,worldy,background,nightbackground,streams,forest,rocks,prints,decorations,settlements,animals):
         self.width = worldx # Dimensions of the world
         self.height = worldy
         self.background = background # Background, which should be scaled to the dimensions of the world.
@@ -154,7 +232,14 @@ class World:
         self.prints = prints # A list of prints
         self.decorations = decorations # A list of decoration objects
         self.settlements = settlements # A list of settlement objects
+        self.animals = animals # A list of animals, currently excluding the player.
         self.obstacles = forest + rocks # All obstacles, to be sent to the posok() function
-        self.interactives = prints + settlements # All interactives, to be sent to the collision() function
-        self.objectsofheight = forest + rocks + prints + decorations + settlements
+        self.interactives = prints + settlements + animals # All interactives, to be sent to the collision() function
+        self.objectsofheight = forest + rocks + prints + decorations + settlements + animals
         self.objectsofheight.sort(key=lambda x:x.ybase) # Sort all blittables, to be sent to the drawscreen() function
+
+    def turn(self): # For worlds with animals, move the animals in the world.
+        for animal in self.animals:
+            animal.move(self.obstacles,self.animals)
+        self.objectsofheight.sort(key=lambda x:x.ybase) # A rare case in which bubble-sort might be more efficient, but
+                                                        # we will use built-in sort anyway.
