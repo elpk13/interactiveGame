@@ -18,12 +18,15 @@ def run_first_chapter(): # All in function, so can run from other screen.
     window_height = globinfo['window_height']
     screen = makescreen() # instead of including them here.
 
+
     # Below is the getWorldGraphics function.  Ideally, this would only run once,
     # and not repeat for every chapter.  Move into arguments called to run_first_chapter()
     # when we get a chance.
-    worldx, worldy, background, nightbackground, character, streamAppearancesByAim, streamNightAppearancesByAim, streamDimensionsByAim, streamCurveCoefficients, treeGraphics, treeNightGraphics, treeGreenness, printGraphics, printGraphicsSmall, animalTypes = getWorldGraphics(globinfo['window_height'])
-    chapterworld = generateWorld(worldx,worldy,background, nightbackground, streamAppearancesByAim, streamNightAppearancesByAim, streamDimensionsByAim, streamCurveCoefficients, treeGraphics, treeNightGraphics, treeGreenness, printGraphicsSmall)
+    worldx, worldy, background, nightbackground, wolfGraphics, streamAppearancesByAim, streamNightAppearancesByAim, streamDimensionsByAim, streamCurveCoefficients, treeGraphics, treeNightGraphics, treeGreenness, rockGraphics, rockNightGraphics, decorGraphics, decorNightGraphics, decorDynamics, printGraphics, printGraphicsSmall, animalTypes, animalGraphics = getWorldGraphics(globinfo['window_height'])
+    chapterworld = generateWorld(worldx,worldy,background, nightbackground, streamAppearancesByAim, streamNightAppearancesByAim, streamDimensionsByAim, streamCurveCoefficients, treeGraphics, treeNightGraphics, treeGreenness, rockGraphics, rockNightGraphics, decorGraphics, decorNightGraphics, decorDynamics, printGraphicsSmall, animalGraphics)
     ybaselist = getYbaselist(chapterworld.objectsofheight)
+
+    charname, framelists = getCharacterData(wolfGraphics)
 
     inchapter = True
     metworldedge = False
@@ -47,7 +50,7 @@ def run_first_chapter(): # All in function, so can run from other screen.
     night = False
     frame_time = globinfo['frame_time']
 
-    drawScreen(screen,window_width,window_height,character,playerx,playery,chapterworld,ybaselist,timelapsed,night,health,currentmode,currentframe)
+    drawScreen(screen,window_width,window_height,framelists,playerx,playery,chapterworld,ybaselist,timelapsed,night,health,currentmode,currentframe)
     dialog.akela(screen,"The tutorial can be like this.")
 
     while inchapter:
@@ -126,19 +129,19 @@ def run_first_chapter(): # All in function, so can run from other screen.
                 else:
                     metpredator = True
                 doesCol.xpos = -1000
-                drawScreen(screen,window_width,window_height,character,playerx,playery,chapterworld,ybaselist,timelapsed,night,health,currentmode,currentframe)
+                drawScreen(screen,window_width,window_height,framelists,playerx,playery,chapterworld,ybaselist,timelapsed,night,health,currentmode,currentframe)
             elif isinstance(intCol,list): # Code for other interactives - like the den - go here.
                 pass
 
         if dist > 0: # If player moves, update animation frame in list.
-            if currentframe != len(character.framelists[currentmode]) - 1:
+            if currentframe != len(framelists[currentmode]) - 1:
                 currentframe += 1
             else:
                 currentframe = 2 # Reset to third frame to loop
         else:
             currentframe = 0 # If player doesn't move, return to standing.
 
-        drawScreen(screen,window_width,window_height,character,playerx,playery,chapterworld,ybaselist,timelapsed,night,health,currentmode,currentframe)
+        drawScreen(screen,window_width,window_height,framelists,playerx,playery,chapterworld,ybaselist,timelapsed,night,health,currentmode,currentframe)
         pygame.time.delay(frame_time)
         timelapsed += 1
         if timelapsed == 2400:
@@ -153,4 +156,3 @@ def run_first_chapter(): # All in function, so can run from other screen.
     return dialog.dialog(screen,"What would you like to do now?",['Stay with pack another year','Move on to next chapter'])
 
 run_first_chapter()
-
