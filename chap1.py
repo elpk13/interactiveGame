@@ -5,24 +5,15 @@ from worldgeneration import *
 from gamethods import *
 import random
 import dialog
-
 import pygame
-pygame.init()
 
-# Currently, this function is called at the bottom of the script, so that the
-# script can run for itself.
 
-def run_first_chapter(): # All in function, so can run from other screen.
-    globinfo = readglobals() # We will soon add screen, etc. to function arguments
+def run_first_chapter(screen, worldx, worldy, background, nightbackground, wolfGraphics, streamAppearancesByAim, streamNightAppearancesByAim, streamDimensionsByAim, streamCurveCoefficients, treeGraphics, treeNightGraphics, treeGreenness, rockGraphics, rockNightGraphics, decorGraphics, decorNightGraphics, decorDynamics, printGraphics, printGraphicsSmall, animalTypes, animalGraphics, secondyear=False):
+    globinfo = readglobals()
     window_width = globinfo['window_width']
     window_height = globinfo['window_height']
-    screen = makescreen() # instead of including them here.
 
-
-    # Below is the getWorldGraphics function.  Ideally, this would only run once,
-    # and not repeat for every chapter.  Move into arguments called to run_first_chapter()
-    # when we get a chance.
-    worldx, worldy, background, nightbackground, wolfGraphics, streamAppearancesByAim, streamNightAppearancesByAim, streamDimensionsByAim, streamCurveCoefficients, treeGraphics, treeNightGraphics, treeGreenness, rockGraphics, rockNightGraphics, decorGraphics, decorNightGraphics, decorDynamics, printGraphics, printGraphicsSmall, animalTypes, animalGraphics = getWorldGraphics(globinfo['window_height'])
+    # Make a world for this chapter.
     chapterworld = generateWorld(worldx,worldy,background, nightbackground, streamAppearancesByAim, streamNightAppearancesByAim, streamDimensionsByAim, streamCurveCoefficients, treeGraphics, treeNightGraphics, treeGreenness, rockGraphics, rockNightGraphics, decorGraphics, decorNightGraphics, decorDynamics, printGraphicsSmall, animalGraphics)
     ybaselist = getYbaselist(chapterworld.objectsofheight)
 
@@ -56,7 +47,7 @@ def run_first_chapter(): # All in function, so can run from other screen.
     while inchapter:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  # If 'x' button selected, end
-                inchapter = False
+                return 'stop'
         pressed = pygame.key.get_pressed() # This method of movement checking
         newposx = playerx                  # considers all keys which may be
         newposy = playery                  # pressed at the end of a tick/frame.
@@ -144,7 +135,7 @@ def run_first_chapter(): # All in function, so can run from other screen.
         drawScreen(screen,window_width,window_height,framelists,playerx,playery,chapterworld,ybaselist,timelapsed,night,health,currentmode,currentframe)
         pygame.time.delay(frame_time)
         timelapsed += 1
-        if timelapsed == 2400:
+        if timelapsed == 20: # Should be 2400 ticks per year.  Set to 20 for testing.
             inchapter = False
         elif timelapsed % 600 == 0:
             night = False
@@ -153,6 +144,7 @@ def run_first_chapter(): # All in function, so can run from other screen.
     dialog.akela(screen,"Time ended for the first phase of the game.")
     if metpredator + metprey + metperson + metworldedge + metignore:
         dialog.akela(screen,"You've learned everything a wolf should know.") # Add picture of chosen character here?  Add headshot to class!
-    return dialog.dialog(screen,"What would you like to do now?",['Stay with pack another year','Move on to next chapter'])
-
-run_first_chapter()
+    if secondyear == False:
+        return dialog.dialog(screen,"What would you like to do now?",['Stay with pack another year','Move on to next chapter','Return to the main menu'])
+    else:
+        return dialog.dialog(screen,"You're all grown up.  What would you like to do now?",['Move on to the next chapter','Return to the main menu'])
