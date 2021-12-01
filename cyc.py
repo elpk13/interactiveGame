@@ -1,87 +1,50 @@
 #The purpose of this file is to host the choose your character screen that follows the main menu
-#eventually a difficulty setting will be integrated here or on the settings page.
+#eventually a difficulty setting will be integrated here or on the settings page?
 
 #import necessary systems
 import pygame
-import os
 
-#inits
-pygame.init()
+def character_select(screen,menuGraphics):
+    window_width, window_height = screen.get_width(), screen.get_height()
+    settingsfile = open("settings.txt",'r')
+    currentsettings = settingsfile.readlines()
+    settingsfile.close()
+    indicator1rad, ypos1, ypos2 = int(window_height/24), int(window_height/2)-int(window_height)/24, window_height-int(window_height/24)
+    positions1list = [(int(window_width/6)-indicator1rad,ypos1),(int(window_width/2)-indicator1rad,ypos1),(int(5*window_width/6)-indicator1rad,ypos1),
+        (int(window_width/6)-indicator1rad,ypos2),(int(window_width/2)-indicator1rad,ypos2),(int(5*window_width/6)-indicator1rad,ypos2)]
+    position1 = int(currentsettings[2][0]) # Current character is chosen by number on third line of settings file.
 
-#set the parameters for the pygame window
-height = 900 # Set the dimensions of the screen, by which
-width = 1200  # everything will be scaled later.
-screen = pygame.display.set_mode((width,height))
+    def draw_char_screen(screen,menuGraphics,window_width,window_height):
+        screen.blit(menuGraphics['background'], (0,0)) # Portrait widths may vary, so justify.
+        screen.blit(menuGraphics['topleftwolf'],(int(window_width/6-menuGraphics['topleftwolf'].get_width()/2),int(window_height/12)))
+        screen.blit(menuGraphics['topcentwolf'],(int(window_width/2-menuGraphics['topcentwolf'].get_width()/2),int(window_height/12)))
+        screen.blit(menuGraphics['topritewolf'],(int(5*window_width/6-menuGraphics['topritewolf'].get_width()/2),int(window_height/12)))
+        screen.blit(menuGraphics['basleftwolf'],(int(window_width/6-menuGraphics['basleftwolf'].get_width()/2),int(7*window_height/12)))
+        screen.blit(menuGraphics['bascentwolf'],(int(window_width/2-menuGraphics['bascentwolf'].get_width()/2),int(7*window_height/12)))
+        screen.blit(menuGraphics['basritewolf'],(int(5*window_width/6-menuGraphics['basritewolf'].get_width()/2),int(7*window_height/12)))
+        screen.blit(menuGraphics['indicator'],positions1list[position1])
+        pygame.display.update()
+    draw_char_screen(screen,menuGraphics,window_width,window_height)
 
-# Select and size background image
-background = pygame.image.load(os.path.join('Assets',"winter_forest_background.jpg")) # Image credit:
-background = pygame.transform.scale(background,(width,height)) # Linnaea Mallette,
-                                                               # publicdomainpictures.net
-
-# Set up the wolves' portrait images.
-topleft = pygame.image.load(os.path.join('Assets',"Aspen_Headshot.png"))
-topcent = pygame.image.load(os.path.join('Assets',"Khewa_Headshot.png"))
-toprite = pygame.image.load(os.path.join('Assets',"Mani_Headshot.png"))
-basleft = pygame.image.load(os.path.join('Assets',"Nico_Headshot.png"))
-bascent = pygame.image.load(os.path.join('Assets',"Sparrow_Headshot.png"))
-basrite = pygame.image.load(os.path.join('Assets',"Timber_Headshot.png"))
-# Scale to uniform height without distorting.
-topleft = pygame.transform.scale(topleft,(int(height*topleft.get_width()/(3*topleft.get_height())),int(height/3)))
-topcent = pygame.transform.scale(topcent,(int(height*topcent.get_width()/(3*topcent.get_height())),int(height/3)))
-toprite = pygame.transform.scale(toprite,(int(height*toprite.get_width()/(3*toprite.get_height())),int(height/3)))
-basleft = pygame.transform.scale(basleft,(int(height*basleft.get_width()/(3*basleft.get_height())),int(height/3)))
-bascent = pygame.transform.scale(bascent,(int(height*bascent.get_width()/(3*bascent.get_height())),int(height/3)))
-basrite = pygame.transform.scale(basrite,(int(height*basrite.get_width()/(3*basrite.get_height())),int(height/3)))
-
-#Set up the indicators used to make choices - will use a three indicator style like settings menu
-# - but temporarily only need one indicator because starting with two wolves
-indicator1 = pygame.image.load(os.path.join('Assets',"indicator_paw.png"))
-indicator1 = pygame.transform.scale(indicator1,(int(height/12),int(height/12)))
-indicator1rad, ypos1, ypos2 = int(height/24), int(height/2)-int(height)/24, height-int(height/24)
-positions1list = [(int(width/6)-indicator1rad,ypos1),(int(width/2)-indicator1rad,ypos1),(int(5*width/6)-indicator1rad,ypos1),
-    (int(width/6)-indicator1rad,ypos2),(int(width/2)-indicator1rad,ypos2),(int(5*width/6)-indicator1rad,ypos2)]
-position1 = 0
-
-settingsfile = open("settings.txt",'r')
-currentsettings = settingsfile.readlines()
-settingsfile.close()
-
-# Blit background, then portraits, then indicator, and update screen.
-def drawscreen():
-    screen.blit(background, (0,0))
-    screen.blit(topleft,(int(width/6-topleft.get_width()/2),int(height/12)))
-    screen.blit(topcent,(int(width/2-topcent.get_width()/2),int(height/12)))
-    screen.blit(toprite,(int(5*width/6-toprite.get_width()/2),int(height/12)))
-    screen.blit(basleft,(int(width/6-basleft.get_width()/2),int(7*height/12)))
-    screen.blit(bascent,(int(width/2-bascent.get_width()/2),int(7*height/12)))
-    screen.blit(basrite,(int(5*width/6-basrite.get_width()/2),int(7*height/12)))
-    screen.blit(indicator1,positions1list[position1])
-    pygame.display.update()
-
-drawscreen()
-
-runningcyc = True
-
-while runningcyc:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:  # If 'x' button selected, end
-            runningcyc = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT and position1 % 3 != 2:
-                position1 += 1
-            elif event.key == pygame.K_LEFT and position1 % 3 != 0:
-                position1 -= 1
-            elif event.key == pygame.K_UP and position1 > 2:
-                position1 -= 3
-            elif event.key == pygame.K_DOWN and position1 < 3:
-                position1 += 3
-            drawscreen()
-            if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
-                currentsettings[2] = str(position1)
-                settingsfile = open("settings.txt",'w')
-                for eachline in currentsettings:
-                    settingsfile.write(eachline)
-                settingsfile.close()
-                import cychap
-                drawscreen()
-                #move on to the next screen -> chapter selection
+    runningcyc = True
+    while runningcyc:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:  # If 'x' button selected, end
+                return 'stop'
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT and position1 % 3 != 2:
+                    position1 += 1
+                elif event.key == pygame.K_LEFT and position1 % 3 != 0:
+                    position1 -= 1
+                elif event.key == pygame.K_UP and position1 > 2:
+                    position1 -= 3
+                elif event.key == pygame.K_DOWN and position1 < 3:
+                    position1 += 3
+                draw_char_screen(screen,menuGraphics,window_width,window_height)
+                if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    currentsettings[2] = str(position1) + '\n'
+                    settingsfile = open("settings.txt",'w')
+                    for eachline in currentsettings:
+                        settingsfile.write(eachline)
+                    settingsfile.close()
+                    runningcyc = False
