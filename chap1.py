@@ -32,7 +32,7 @@ def run_first_chapter(screen, worldx, worldy, background, nightbackground, wolfG
         playerx = random.randint(0,worldx)
         playery = random.randint(0,worldy)
 
-    currentmode = 0
+    currentmode = 5 # Use smaller images for pup.
     currentframe = 0
 
     health = 100
@@ -72,13 +72,13 @@ def run_first_chapter(screen, worldx, worldy, background, nightbackground, wolfG
         # Newpos variables now indicate the desired position of the player in the
         # next frame.
             if newposx > playerx:   # When choosing the direction to face the
-                currentmode = 0     # player, left and right are prioritized for
+                currentmode = 5     # player, left and right are prioritized for
             elif newposx < playerx: # diagonals, as in the Champion Island game.
-                currentmode = 1
+                currentmode = 6
             elif newposy > playery:
-                currentmode = 2
+                currentmode = 7
             elif newposy < playery:
-                currentmode = 3
+                currentmode = 8    # To access the smaller 'pup' frames use 5-8, not 0-3.
         if posok(newposx,newposy,chapterworld.obstacles) and posinworld(newposx,newposy,worldx,worldy,window_width,window_height):
             playerx,playery = newposx,newposy # Player position changes;
         elif metworldedge == False and not posinworld(newposx,newposy,worldx,worldy,window_width,window_height):
