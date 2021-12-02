@@ -46,23 +46,38 @@ def getWorldGraphics(window_height,worldx=0,worldy=0,bgname="Map_Background.png"
             pframels = [] # left-walking, one up, one down.
             pframeus = [] # Each starts with standing and loops from the third frame.
             pframeds = []
+            pupframers = []
+            pupframels = []
+            pupframeus = []
+            pupframeds = []
             for f in range(1,9):
                 frame = pygame.image.load(os.path.join('Animations','Wolves',wolfname,wolfname + '_Walking_Right000' + str(f) + '.png'))
                 frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
                 pframers.append(frame)
+                frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(12*frame.get_height())),int(height/12)))
+                pupframers.append(frame)
+                frame = pygame.image.load(os.path.join('Animations','Wolves',wolfname,wolfname + '_Walking_Right000' + str(f) + '.png'))
+                frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
                 frame = pygame.transform.flip(frame,True,False)
                 pframels.append(frame)
+                frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(12*frame.get_height())),int(height/12)))
+                pupframels.append(frame)
                 frame = pygame.image.load(os.path.join('Animations','Wolves',wolfname,wolfname + '_Walking_Forward000' + str(f) + '.png'))
                 frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
                 pframeus.append(frame)
+                frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(12*frame.get_height())),int(height/12)))
+                pupframeus.append(frame)
                 frame = pygame.image.load(os.path.join('Animations','Wolves',wolfname,wolfname + '_walking_Away000' + str(f) + '.png'))
                 frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(7*frame.get_height())),int(height/7)))
                 pframeds.append(frame)
+                frame = pygame.transform.scale(frame,(int(height*frame.get_width()/(9*frame.get_height())),int(height/9)))
+                pupframeds.append(frame)
+            frame = pygame.image.load(os.path.join('Assets',wolfname+'_Headshot.png'))
 
             if wolfname == "Mani":
                 wolfname = "Máni"  # Accent mark not in filename.
 
-            wolfGraphics[wolfname] = [pframers,pframels,pframeus,pframeds]
+            wolfGraphics[wolfname] = [pframers,pframels,pframeus,pframeds,frame,pupframers,pupframels,pupframeus,pupframeds]
 
         return wolfGraphics
 
@@ -367,3 +382,86 @@ def generateWorld(worldx,worldy,background, nightbackground, streamAppearancesBy
 #     tom = turtle.Turtle()
 #     tom.throwmeanerror(idareyou)
 # in a command prompt; it's fun!
+
+def makeHuntWorld(oldworld,centerx,centery,window_width,window_height,prey,animalGraphics,night,pack=False,wolfGraphics={ },maincharname='',packmemcount=0):
+    borders = (int(centerx - window_width/2), int(centerx + window_width/2), int(centery - window_height/2), int(centery + window_width/2))
+    if night:
+        huntbackground = oldworld.nightbackground.subsurface((borders[0],borders[2],window_width,window_height))
+    else:
+        huntbackground = oldworld.background.subsurface((borders[0],borders[2],window_width,window_height))
+
+    def inHuntWorld(object, borders):
+        if object.xpos < borders[1] and object.width + object.xpos > borders[0] and object.ypos < borders[3] and object.ybase > borders[2]:
+            return True
+        return False
+
+    newstream = []
+    for stream in oldworld.streams:
+        for segment in stream:
+            if inHuntWorld(segment,borders):
+                newstream.append(segment)
+    keptforest = []
+    for tree in oldworld.forest:
+        if inHuntWorld(tree,borders):
+            keptforest.append(tree)
+    keptrocks = []
+    for rock in oldworld.rocks:
+        if inHuntWorld(rock,borders):
+            keptrocks.append(rock)
+    keptdecorations = []
+    for decor in oldworld.decorations:
+        if inHuntWorld(rock,borders):
+            keptdecorations.append(decor)
+    # There are no settlements nor prints in the hunting world.
+
+    def posok(x,y,obstacles):
+        for ob in obstacles:
+            if ob.collidesat(x,y):
+                return False
+        else:
+            return True
+
+    def birthPreyAnimal(borders,animal,obstacles,animalGraphics):
+        while True:
+            x = random.randint(borders[0],borders[1])
+            y = random.randint(borders[2],borders[3])
+            if posok(x,y,obstacles):
+                appearance = animalGraphics[animal]
+                if animal == 'rabbit': # Keep in if-elif tree so that class is different.
+                    return Rabbit(x,y,appearance[0][0].get_height(),appearance[0][0].get_width(),appearance)
+                elif animal == 'deer': # Class is different so that move method is different,
+                    return Deer(x,y,appearance[0][0].get_height(),appearance[0][0].get_width(),appearance)
+                elif animal == 'bison': # Else there would be an uglier if-else tree in 'move()'.
+                    return Bison(x,y,appearance[0][0].get_height(),appearance[0][0].get_width(),appearance)
+                else:
+                    return Animal(x,y,appearance[0][0].get_height(),appearance[0][0].get_height(),appearance,animal,10)
+
+    newanimals = [ birthPreyAnimal(borders,prey,keptforest+keptrocks,animalGraphics) ]
+
+    def addWolf(borders,obstacles,wolfGraphics,maincharname):
+        while True:
+            s = random.randint(0,2*(borders[1]+borders[3]-borders[0]-borders[2]))
+            if s < borders[1] - borders[0]:
+                x = borders[0] + s
+                y = borders[3]
+            elif s < borders[1]+borders[3]-borders[0]-borders[2]:
+                x = borders[1]
+                y = borders[3] - s + borders[1] - borders[0]
+            elif s < 2*borders[1]+borders[3]-2*borders[0]-borders[2]:
+                x = borders[0] + s - borders[1] - borders[3] + borders[0] + borders[2]
+                y = borders[2]
+            else:
+                x = borders[0]
+                y = borders[2] + s - 2*borders[1] - borders[3] + 2*borders[0] + borders[2]
+            if posok(x,y,obstacles):
+                charnamelist = list(wolfGraphics)
+                #charnamelist.remove(maincharname) Re-instate this line when we have graphics for a second wolf!
+                wolfname = random.choice(charnamelist)
+                appearances = wolfGraphics[wolfname]
+                return Wolf(x,y,appearances[0][0].get_height(),appearances[0][0].get_width(),appearances,wolfname)
+
+    if pack:
+        for i in range(packmemcount):
+            newanimals.append(addWolf(borders,keptforest+keptrocks,wolfGraphics,maincharname))
+
+    return borders, World(window_width,window_height,huntbackground,huntbackground,[newstream],keptforest,keptrocks, [    ], keptdecorations, [          ],newanimals)
